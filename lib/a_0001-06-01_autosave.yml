@@ -1,0 +1,214 @@
+--- !ruby/object:PlayerCharacter
+items: !ruby/object:Items
+  default_weapon:
+    fists: &1
+      :name: fists
+      :type: unarmed weapon
+      :dice: 4
+      :number_of_dice: 1
+      :crit: 20
+      :crit_damage: 3
+      :enchantment: 0
+  item_list:
+    bronze sword:
+      :name: bronze sword
+      :type: 1-hand weapon
+      :dice: 6
+      :number_of_dice: 1
+      :enchantment: 0
+      :crit: 19
+      :crit_damage: 2
+      :price: 10
+    bronze greatsword:
+      :name: bronze greatsword
+      :type: 2-hand weapon
+      :dice: 8
+      :number_of_dice: 1
+      :enchantment: 0
+      :crit: 20
+      :crit_damage: 3
+      :price: 10
+    bronze knuckles:
+      :name: bronze knuckles
+      :type: unarmed weapon
+      :dice: 4
+      :number_of_dice: 1
+      :enchantment: 0
+      :crit: 20
+      :crit_damage: 3
+      :price: 10
+    bronze dual swords:
+      :name: bronze dual swords
+      :type: dual wield weapon
+      :dice: 6
+      :number_of_dice: 1
+      :enchantment: 0
+      :crit: 18
+      :crit_damage: 2
+      :price: 10
+    wooden staff:
+      :name: wooden staff
+      :type: staff
+      :dice: 4
+      :number_of_dice: 1
+      :enchantment: 0
+      :crit: 20
+      :crit_damage: 2
+      :price: 10
+    bronze shield:
+      :name: bronze shield
+      :type: shield
+      :defense_bonus: 1
+      :enchantment: 0
+      :price: 10
+    health potion:
+      :name: health potion
+      :type: healing
+      :stat: hp
+      :bonus: 20
+      :price: 10
+full_spell_list:
+  burning hands:
+    :name: burning hands
+    :level: 1
+    :type: damage
+    :dice: 4
+    :number_of_dice: 1
+    :damage_bonus: false
+    :number_of_dice_bonus: proficiency
+    :mana_cost: 10
+    :price: 100
+    :description: "You touch your opponent with hands of flame. \nDeals 1d6 damage
+      per magic proficiency point."
+  magic missle:
+    :name: magic missle
+    :level: 1
+    :type: damage
+    :dice: 4
+    :number_of_dice: 1
+    :damage_bonus: magic
+    :number_of_dice_bonus: level
+    :mana_cost: 15
+    :price: 150
+    :description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4
+      + cha modifier damage per level."
+  cure light wounds:
+    :name: cure light wounds
+    :level: 1
+    :type: healing
+    :dice: 8
+    :number_of_dice: 1
+    :healing_bonus: proficiency
+    :number_of_dice_bonus: false
+    :mana_cost: 20
+    :price: 200
+    :description: "You use your magic to mend some of your cuts and bruises. \nHeals
+      1d8 + magic proficiency point per level."
+  beguiler's grace:
+    :name: beguiler's grace
+    :level: 1
+    :type: buff
+    :affected_stat:
+    - ac
+    - magic resist
+    :bonus: cha
+    :time: level
+    :mana_cost: 20
+    :price: 200
+    :description: |-
+      You radiate such grace that your enemies struggle to hit you.
+      +cha modifier to ac for a number of rounds equal to your level.
+  shock weapon:
+    :name: shock weapon
+    :level: 1
+    :type: buff
+    :affected_stat:
+    - attack
+    - damage
+    :bonus: mag
+    :time: proficiency
+    :mana_cost: 10
+    :price: 100
+    :description: |-
+      Your weapon begins to crackle with electric energy.
+      +mag modifier to attack and damage for a number of rounds equal to your magic proficiency
+  ray of sickening:
+    :name: ray of sickening
+    :level: 1
+    :type: curse
+    :status: sickened
+    :time: level
+    :mana_cost: 2555
+    :cost: 250
+    :description: A black ray projects from your pointed finger, sickening your opponent.
+date: 1
+hook: 2
+max_proficency: 4
+name: a
+race: drai
+inventory:
+  fists: *1
+known_spells: {}
+default_weapon: *1
+equipped_weapon: *1
+equipped_shield: false
+wealth: 0
+fame: 0
+current_exp: 0
+exp_needed: 100
+str: 16
+dex: 12
+con: 14
+mag: 14
+cha: 14
+spell_failure_chance: 0
+armor_bonus: 0
+shield_bonus: 0
+one_hand_prof: 0
+dual_wield_prof: 0
+two_hand_prof: 0
+magic_prof: 0
+unarmed_prof: 1
+str_modifier: 3
+dex_modifier: 1
+con_modifier: 2
+mag_modifier: 2
+cha_modifier: 2
+level: 1
+assign_attribute_points: 0
+assign_proficiency_points: 0
+min_str: 16
+min_dex: 12
+min_con: 14
+min_mag: 14
+min_cha: 14
+max_str: 18
+max_dex: 18
+max_con: 18
+max_mag: 18
+max_cha: 18
+min_one_hand: 0
+min_dual_wield: 0
+min_two_hand: 0
+min_magic: 0
+min_unarmed: 0
+hp: 16
+max_hp: 16
+bab: 1
+ac: 11
+one_hand_atk: 4
+one_hand_damage: 3
+dual_wield_atk: 4
+dual_wield_damage: 3
+two_hand_atk: 4
+two_hand_damage: 4
+unarmed_atk: 5
+unarmed_damage: 4
+weapon_enchantment: 0
+attack: 5
+damage: 4
+mag_resist: 2
+cbm: 5
+cbm_def: 16
+max_mana: 160
+mana: 160

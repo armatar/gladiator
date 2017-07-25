@@ -1,0 +1,110 @@
+--- !ruby/object:Player_Character
+items: !ruby/object:Items
+  default_weapon:
+    fists: &1
+      :name: fists
+      :type: unarmed weapon
+      :dice: 4
+      :number_of_dice: 1
+      :enchantment: 0
+  item_list:
+    bronze sword:
+      :name: bronze sword
+      :type: 1-hand weapon
+      :dice: 6
+      :number_of_dice: 1
+      :enchantment: 0
+      :price: 10
+    bronze greatsword:
+      :name: bronze greatsword
+      :type: 2-hand weapon
+      :dice: 8
+      :number_of_dice: 1
+      :enchantment: 0
+      :price: 10
+    bronze knuckles:
+      :name: bronze knuckles
+      :type: unarmed weapon
+      :dice: 4
+      :number_of_dice: 1
+      :enchantment: 0
+      :price: 10
+    bronze dual swords:
+      :name: bronze dual swords
+      :type: dual wield weapon
+      :dice: 4
+      :number_of_dice: 2
+      :enchantment: 0
+      :price: 10
+    bronze shield:
+      :name: bronze shield
+      :type: shield
+      :defense_bonus: 1
+      :enchantment: 0
+      :price: 10
+date: 1
+hook: 2
+max_proficency: 10
+name: audra
+race: aloiln
+inventory:
+  fists: *1
+default_weapon: *1
+equipped_weapon: *1
+wealth: 0
+fame: 0
+current_exp: 0
+exp_needed: 100
+str: 8
+dex: 8
+con: 8
+mag: 8
+cha: 8
+spell_failure_chance: 0
+armor_bonus: 0
+shield_bonus: 0
+one_hand_prof: 0
+dual_wield_prof: 0
+two_hand_prof: 0
+magic_prof: 0
+unarmed_prof: 0
+str_modifier: -1
+dex_modifier: -1
+con_modifier: -1
+mag_modifier: -1
+cha_modifier: -1
+level: 1
+assign_attribute_points: 30
+assign_proficiency_points: 1
+min_str: 8
+min_dex: 8
+min_con: 8
+min_mag: 8
+min_cha: 8
+max_str: 18
+max_dex: 18
+max_con: 18
+max_mag: 18
+max_cha: 18
+min_one_hand: 0
+min_dual_wield: 0
+min_two_hand: 0
+min_magic: 0
+min_unarmed: 0
+bab: 1
+ac: 9
+hp: 2
+one_hand_atk: 0
+one_hand_damage: -1
+dual_wield_atk: 0
+dual_wield_damage: -1
+two_hand_atk: 0
+two_hand_damage: -1
+unarmed_atk: 0
+unarmed_damage: -1
+weapon_enchantment: 0
+attack: 0
+damage: -1
+mag_resist: -1
+cbm: 0
+cbm_def: 9

@@ -1,0 +1,57 @@
+Databases:
+	Character [ user_id, name, gender, image, race, job, level, fame, exp_current, exp_needed, wealth ]
+	Char_Base_Stats [ character_id, str, dex, con, mag, cha, bab ]
+	Char_Calc_Stats [ char_base_stats_id, hp, ac, touch, mag_resist, cmb, cmb_def, mel_atk, ranged_touch_atk ]
+	Enemy [name, gender, image, race, level, exp_worth, wealth, ac, touch, mag_resist]
+	Enemy_Stats [ ]
+	Inventory
+	Inv_Items
+	Items
+	Shop
+
+
+GLADIATOR CONCEPT
+	
+	You come from obscurity -- a no one who dreams of fame and fortune. The life you've always wanted will be forged from this day forward on the sands of the arena floor. The countless enemies that you will face, the fickle eyes of the crowd, and the releness march of time all stand as a barrier to fulfilling your dream. Will you become a gladiator of legend, or will you end up nothing more than a momentary satiation of the people's endless bloodlust?
+
+	Let's find out.
+
+Login > Admin Page > [ Choices: New Game ( if no character ), Continue Game ( if character )]
+
+New Game: -> Loads Introduction Screen with above monologue. -> Character Creation [ ability to update statistics ] -> First Arena Fight
+
+battling level1 enemy human
+
+
+TYPES OF WEAPONS TO BE USED
+	magic
+	1hand & sheild
+	dual weild
+	2hand
+	unarmed
+
+CLASSES FOR CHARACTERS
+	sorcerer - large # of spells, familiar ( boosts crowd )
+	warmage - small # of spells, defensive aura, 1hand + mag
+	warrior - dual wielding & shield bash?
+	barbarian - 2hand, barbarian rage
+	monk - bonus to cbm, bonus to ac + mag_resist, cannot use weapons, cannot use armor
+
+DESCRIPTION OF BASE STATS
+	strength - how likely melee attacks will hit, how hard they will hit
+	dexterity - how likely you are to dodge melee and touch attacks, how likely you are to hit with ranged touch attacks
+	constitution - how much hp you have, how much magic resist you have
+	magic - how much magic you have, how strong that magic is
+	charisma - skill with taunts, distractions, and intimidationgs, affects crowd attention
+
+ARMOR
+	Light Armor = +1 to AC, +1 to Magic Resist, -1 to mel_atk, -1 ranged_touch_atk, -1 mag_dc
+	Medium Armor = +2 to AC, +2 to Magic Resist, -2 to mel_atk, -2 ranged_touch_atk, -2 mag_dc
+	Heavy Armor = +3 to AC, +3 to Magic Resist, -3 to mel_atk, -3 ranged_touch_atk, -3 mag_dc
+
+
+
+-------------------
+
+Things to learn: Factory Pattern
+Design Patterns | object oriented
