@@ -230,6 +230,14 @@ module UI
       end
       print_line
     end
+
+    def display_activity_log
+      print_line
+      print_basic_message("Activity Log")
+      print_line
+      print_basic_message (@message)
+      @message = ""
+    end
   end
 
   module CharacterDisplay

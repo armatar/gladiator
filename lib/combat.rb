@@ -64,57 +64,7 @@ class Combat
     end
   end
 
-  def player_turn
-      answer = ask_question("What do you want to do?", false, "You can use the number if you want!")
-      system "clear"
-      if answer == "swing your #{@ally.equipped_weapon[:name]}" || answer == "1"
-        #auto attack
-        player_auto_attack
-        return check_if_dead
-      elsif answer == "use a skill" || answer == "2"
-        # use a skill
-        @message += "You can't use that option yet..."
-        @turn -= 1
-        return true
-      elsif answer == "cast a spell" || answer == "3"
-        # cast a spell
-        return player_cast_spell
-      elsif answer == "perform a combat maneuver" || answer == "4"
-        # do cbm
-        return player_do_cbm
-      elsif answer == "use an item" || answer == "5"
-        # use an item
-        item_used = @ally.use_item
-        if item_used
-          result += item_used
-          if !result
-           @turn -= 1
-          return true
-          else
-            @message = result
-            return false
-          end
-        else
-          @turn -= 1
-          return true
-        end
-      elsif answer == "equip a weapon" || answer == "6"
-        # equip a weapon
-        changed = @ally.equip_weapon
-        if changed
-          @message += changed 
-          return false
-        else
-          @turn -= 1
-          return true
-        end
-      else 
-        @message += "Please select a number from the list provided."
-        @turn -= 1
-        return true
-      end
-  end
-
+  #will eventually go into enemyai
   def enemy_turn
     damage = attack_with_weapon(@enemy, @ally)
       if damage
@@ -131,12 +81,11 @@ class Combat
       end
   end
 
-  def display_activity_log
-      print_line
-      print_basic_message("Activity Log")
-      print_line
-      print_basic_message (@message)
-      @message = ""
+  def check_for_status_effects
+    restore_buff_status(@ally_buff_counter, @turn, "ally")
+    restore_buff_status(@enemy_buff_counter, @turn, "enemy")
+    restore_curse_status(@ally_curse_counter, @turn, "ally")
+    restore_curse_status(@enemy_curse_counter, @turn, "enemy")
   end
 
   def restore_buff_status(time_counter, turn, enemy_or_ally)
@@ -153,54 +102,6 @@ class Combat
         reverse_curse_spell(spell, enemy_or_ally)
         time_counter.delete(expire_turn)
       end
-    end
-  end
-
-  def check_for_status_effects
-      restore_buff_status(@ally_buff_counter, @turn, "ally")
-      restore_buff_status(@enemy_buff_counter, @turn, "enemy")
-      restore_curse_status(@ally_curse_counter, @turn, "ally")
-      restore_curse_status(@enemy_curse_counter, @turn, "enemy")
-  end
-
-  def clear_out_player_effects
-    @ally.hp = @ally.max_hp
-    @ally.mana = @ally.max_mana
-    @ally_buff_counter.each_pair do |expire_turn, spell|
-      @turn = expire_turn
-      restore_buff_status(@ally_buff_counter, @turn, "ally")
-    end
-
-    @ally_curse_counter.each_pair do |expire_turn, spell|
-      @turn = expire_turn
-      restore_curse_status(@ally_curse_counter, @turn, "ally")
-    end
-  end
-
-  def enemy_is_grappled
-    display_CBM(@maneuvers, @grappled)
-    answer = ask_question("#{@enemy.name.capitalize} is grappled -- what would you like to do?", false, "Pinning an enemy successfully will win the match.")
-
-    if answer == "pin"
-      attempt = cbm_attack_attempt(@enemy, @ally)
-      if attempt
-        print_basic_message("You pin #{@enemy.name.capitalize} to the ground!\n")
-        @enemy.hp = -1
-        result = check_if_dead
-        return result
-      else
-        @message += "You fail to pin your enemy and they escape from your grasp.\n\n"
-        reverse_cbm("enemy", @current_enemy_cbm)
-        @current_enemy_cbm = false
-        return false
-      end
-    elsif answer == "release"
-      @message += "You release your enemy from your grapple.\n\n"
-      reverse_cbm("enemy", @current_enemy_cbm)
-      @current_enemy_cbm = false
-      return false
-    else
-      print_error_message("Please type either 'pin' or 'release'.") 
     end
   end
 
@@ -249,105 +150,6 @@ class Combat
       return check_if_dead
     elsif attacker == "enemy"
       return enemy_turn
-    end
-  end
-
-  def player_cast_spell
-    valid_answer = false
-      while !valid_answer
-        display_spell_list(@ally.known_spells)
-        answer = ask_question("What spell do you wish to cast?", false, "Type 'back' to leave without casting a spell.")
-        if answer == "back"
-          system "clear"
-          valid_answer = true
-          @turn -= 1
-          return true
-        elsif @ally.known_spells[answer] && @ally.known_spells[answer][:mana_cost] > @ally.mana
-          system "clear"
-          print_line
-          print_error_message("You don't have enough mana to cast #{answer}!")
-        elsif @ally.known_spells[answer]
-          spell = @ally.known_spells[answer]
-          @ally.mana -= spell[:mana_cost]
-          if check_if_overcome_spell_failure(@ally)
-          system "clear"
-            case spell[:type]
-            when "damage"
-              resisted = check_if_spell_is_resisted(spell, @ally, @enemy)
-              if resisted
-                @message += "#{@enemy.name} resisted the attack!\n\n"
-                return false
-              else
-                @message += "The spell hits!\n"
-                damage = cast_damage_spell(spell, @ally, @enemy)
-                @enemy.hp -= damage
-                return check_if_dead
-              end
-            when "healing"
-              healing = cast_healing_spell(spell, @ally, @enemy)
-              @message += "You heal for #{healing} health\n\n"
-              @ally.hp += healing
-              return false
-            when "buff"
-              time = cast_buff_spell(spell, "ally")
-              time += @turn + 1
-              @ally_buff_counter[time] = spell
-              return false
-            when "curse"
-              resisted = check_if_spell_is_resisted(spell, @ally, @enemy)
-              if resisted
-                @message += "#{@enemy.name} resisted the curse!\n\n"
-              else
-                time = cast_curse_spell(spell, "enemy")
-                time += @turn + 1
-                @enemy_curse_counter[time] = spell
-              end
-              return false
-            end
-          else
-            return false
-          end
-        else
-          system "clear"
-          print_line
-          print_error_message("You don't have the spell #{answer}.")
-        end
-      end
-  end
-
-  def player_do_cbm
-    valid_answer = false
-
-    while !valid_answer
-      display_CBM(@maneuvers, @grappled)
-      answer = ask_question("Which Combat Maneuver would you like to preform?", false, "Type 'back' to return.")
-
-    if answer == "back"
-        @turn -= 1
-        return true
-      elsif !@maneuvers[answer]
-        print_error_message("That's not a valid combat maneuver. Try again.")
-      else
-        success = cbm_attack_attempt(@enemy, @ally)
-        if success
-          if answer == "grapple"
-            @grappled = true
-          end
-          implement_cbm("enemy", @maneuvers[answer])
-          @current_enemy_cbm = @maneuvers[answer]
-          return false
-        else
-          return false
-        end
-      end
-    end
-  end
-
-  def player_auto_attack
-    damage = attack_with_weapon(@ally, @enemy)
-
-    if damage
-      @enemy.hp -= damage
     end
   end
 
@@ -401,34 +203,6 @@ class Combat
       @message += "Damage Roll: #{die_roll} + #{attacker.damage} = #{damage}\n\n"
     end
     return damage
-  end
-
-  def check_if_dead
-    if @enemy.hp <= 0
-      kill = finish_him?(@enemy)
-      if kill
-        return "kill"
-      else
-        return "spare"
-      end
-    else
-      return false
-    end
-  end
-
-  def finish_him?(enemy)
-    continue = false
-    while !continue
-      answer = ask_question("Kill him or spare his life?", ["kill", "spare"], 
-                            "Think carefully about your decision as it may have lasting effects.")
-      if answer == "kill"
-        return true
-      elsif answer == "spare"
-        return false
-      else
-        error_message("Please type either 'kill' or 'spare'.")
-      end
-    end
   end
 
 end
