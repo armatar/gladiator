@@ -1,4 +1,4 @@
-require_relative "lib/main.rb"
+require_relative "lib/story.rb"
 
-game = Main.new
-game.start
+game = Story.new
+game.start_game

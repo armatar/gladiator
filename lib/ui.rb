@@ -243,39 +243,41 @@ module UI
   module CharacterDisplay
     include DisplayShortcuts
 
-    def display_character_sheet(character)
+    def display_character_sheet
       system "clear"
       print_line
-      puts Paint[character.name.capitalize, :white, :bold]
+      puts Paint[@name.capitalize, :white, :bold]
       print_line
-      puts Paint["Race:".ljust(10), :white] + character.race.capitalize
-      puts Paint["HP: ".ljust(10), :white] + character.hp.to_s.ljust(16) + Paint["AC: ".ljust(10), :white] + character.ac.to_s
-      puts Paint["EXP: ".ljust(10), :white] + character.current_exp.to_s + "/" + character.exp_needed.to_s.ljust(14) +
-           Paint["Fame: ".ljust(10), :white] + character.fame.to_s
+      puts Paint["Race:".ljust(10), :white] + @race.capitalize
+      puts Paint["HP: ".ljust(10), :white] + @hp.to_s + "/" + @max_hp.to_s.ljust(16) + 
+          Paint["Mana: ".ljust(10), :white] + @mana.to_s + "/" + @max_mana.to_s
+      puts Paint["AC: ".ljust(10), :white] + @ac.to_s
+      #puts Paint["EXP: ".ljust(10), :white] + @current_exp.to_s + "/" + @exp_needed.to_s.ljust(14) +
+           #Paint["Fame: ".ljust(10), :white] + @fame.to_s
       print_line
-      display_ability_scores(character)
+      display_ability_scores
       print_line
-      display_proficiencies(character)
+      display_proficiencies
       print_line
-      puts Paint["BAB: ".ljust(15), :white] + sprintf("%+d", character.bab.to_s)
-      puts Paint["CBM: ".ljust(15), :white] + sprintf("%+d", character.cbm.to_s)
-      puts Paint["CBM Defense: ".ljust(15), :white] + sprintf("%+d", character.cbm_def.to_s)
-      puts Paint["Sword and Shield: ".ljust(20), :white] + "Attack: " + character.one_hand_atk.to_s.ljust(10) + 
-                                                           "Damage: " + character.one_hand_damage.to_s
-      puts Paint["Dual Wielding: ".ljust(20), :white] + "Attack: " + character.dual_wield_atk.to_s.ljust(10) + 
-                                                        "Damage: " + character.dual_wield_damage.to_s
-      puts Paint["Two Handed: ".ljust(20) , :white]+ "Attack: " + character.two_hand_atk.to_s.ljust(10) + 
-                                                      "Damage: " + character.two_hand_damage.to_s
-      puts Paint["Unarmed: ".ljust(20) , :white]+ "Attack: " + character.unarmed_atk.to_s.ljust(10) + 
-                                                  "Damage: " + character.unarmed_damage.to_s                                                                                                                                                           
+      puts Paint["BAB: ".ljust(15), :white] + sprintf("%+d", @bab.to_s)
+      puts Paint["CBM: ".ljust(15), :white] + sprintf("%+d", @cbm.to_s)
+      puts Paint["CBM Defense: ".ljust(15), :white] + sprintf("%+d", @cbm_def.to_s)
+      puts Paint["Sword and Shield: ".ljust(20), :white] + "Attack: " + @one_hand_atk.to_s.ljust(10) + 
+                                                           "Damage: " + @one_hand_damage.to_s
+      puts Paint["Dual Wielding: ".ljust(20), :white] + "Attack: " + @dual_wield_atk.to_s.ljust(10) + 
+                                                        "Damage: " + @dual_wield_damage.to_s
+      puts Paint["Two Handed: ".ljust(20) , :white]+ "Attack: " + @two_hand_atk.to_s.ljust(10) + 
+                                                      "Damage: " + @two_hand_damage.to_s
+      puts Paint["Unarmed: ".ljust(20) , :white]+ "Attack: " + @unarmed_atk.to_s.ljust(10) + 
+                                                  "Damage: " + @unarmed_damage.to_s                                                                                                                                                           
       print_line
-      puts Paint["Magic Resist: ".ljust(10), :white] + sprintf("%+d", character.mag_resist.to_s).ljust(10) +
-           Paint["Spell Failure: ".ljust(10), :white] + character.spell_failure_chance.to_s + "%"
-      puts Paint["Magic DC: ".ljust(10), :white] + "Level 1: " + character.get_magic_dc(1).to_s.ljust(5) +
-                                    "Level 2: " + character.get_magic_dc(2).to_s.ljust(5) +
-                                    "Level 3: " + character.get_magic_dc(3).to_s.ljust(5) +
-                                    "Level 4: " + character.get_magic_dc(4).to_s.ljust(5) +
-                                    "Level 5: " + character.get_magic_dc(5).to_s
+      puts Paint["Magic Resist: ".ljust(10), :white] + sprintf("%+d", @mag_resist.to_s).ljust(10) +
+           Paint["Spell Failure: ".ljust(10), :white] + @spell_failure_chance.to_s + "%"
+      puts Paint["Magic DC: ".ljust(10), :white] + "Level 1: " + get_magic_dc(1).to_s.ljust(5) +
+                                    "Level 2: " + get_magic_dc(2).to_s.ljust(5) +
+                                    "Level 3: " + get_magic_dc(3).to_s.ljust(5) +
+                                    "Level 4: " + get_magic_dc(4).to_s.ljust(5) +
+                                    "Level 5: " + get_magic_dc(5).to_s
       print_line
       puts Paint["press [enter] to view spells and inventory..."]
       gets.chomp
@@ -286,59 +288,61 @@ module UI
       print_line
       puts Paint["Inventory", :white]
       print_line
+      display_list_of_items(@inventory)
+      print_line
       puts Paint["Wealth: ".ljust(10), :white] + @wealth.to_s
       print_line
       puts Paint["press [enter] to continue..."]
       gets.chomp
     end
 
-    def display_proficiencies(character)
+    def display_proficiencies
       puts Paint["Skill".ljust(23) + "Proficency", :bold]
-      puts "1. Sword and Shield: ".ljust(23) + "x " * character.one_hand_prof + 
-            "_ " * (character.max_proficency - character.one_hand_prof)
-      puts "2. Dual Wielding: ".ljust(23) + "x " * character.dual_wield_prof + 
-           "_ " * (character.max_proficency - character.dual_wield_prof)
-      puts "3. Two Handed: ".ljust(23) + "x " * character.two_hand_prof + 
-           "_ " * (character.max_proficency - character.two_hand_prof)
-      puts "4. Magic: ".ljust(23) + "x " * character.magic_prof + 
-           "_ " * (character.max_proficency - character.magic_prof)
-      puts "5. Unarmed: ".ljust(23) + "x " * character.unarmed_prof + 
-           "_ " * (character.max_proficency - character.unarmed_prof)
+      puts "1. Sword and Shield: ".ljust(23) + "x " * @one_hand_prof + 
+            "_ " * (@max_proficency - @one_hand_prof)
+      puts "2. Dual Wielding: ".ljust(23) + "x " * @dual_wield_prof + 
+           "_ " * (@max_proficency - @dual_wield_prof)
+      puts "3. Two Handed: ".ljust(23) + "x " * @two_hand_prof + 
+           "_ " * (@max_proficency - @two_hand_prof)
+      puts "4. Magic: ".ljust(23) + "x " * @magic_prof + 
+           "_ " * (@max_proficency - @magic_prof)
+      puts "5. Unarmed: ".ljust(23) + "x " * @unarmed_prof + 
+           "_ " * (@max_proficency - @unarmed_prof)
     end
 
-    def display_ability_scores(character)
+    def display_ability_scores
       puts Paint["Attribute".ljust(18) + "Score".ljust(10) + "Modifier", :bold]
-      puts "Strength: ".ljust(18) + character.str.to_s.ljust(10) + sprintf("%+d", character.str_modifier.to_s)
-      puts "Dexterity: ".ljust(18) + character.dex.to_s.ljust(10) + sprintf("%+d", character.dex_modifier.to_s)
-      puts "Constitution: ".ljust(18) + character.con.to_s.ljust(10) + sprintf("%+d", character.con_modifier.to_s)
-      puts "Magic: ".ljust(18) + character.mag.to_s.ljust(10) + sprintf("%+d", character.mag_modifier.to_s)
-      puts "Charisma: ".ljust(18) + character.cha.to_s.ljust(10) + sprintf("%+d", character.cha_modifier.to_s)
+      puts "Strength: ".ljust(18) + @str.to_s.ljust(10) + sprintf("%+d", @str_modifier.to_s)
+      puts "Dexterity: ".ljust(18) + @dex.to_s.ljust(10) + sprintf("%+d", @dex_modifier.to_s)
+      puts "Constitution: ".ljust(18) + @con.to_s.ljust(10) + sprintf("%+d", @con_modifier.to_s)
+      puts "Magic: ".ljust(18) + @mag.to_s.ljust(10) + sprintf("%+d", @mag_modifier.to_s)
+      puts "Charisma: ".ljust(18) + @cha.to_s.ljust(10) + sprintf("%+d", @cha_modifier.to_s)
     end
 
-    def update_stats(character, message)
+    def assign_attributes_header(message)
       system "clear"
       puts message
-      character.update_modifiers
+      update_modifiers
       message = ""
       print_line
       print_title('A S S I G N  Y O U R  S T A T S')
       print_line
-      display_ability_scores(character)
+      display_ability_scores
 
-      print_stat_and_label("\nCurrent Points to Assign: ", character.assign_attribute_points.to_s)
+      print_stat_and_label("\nCurrent Points to Assign: ", @available_attribute_points.to_s)
       print_line
     end
 
-    def assign_proficiencies(character, message)
+    def assign_proficiencies_header(message)
       system "clear"
       puts message
       print_line
       print_title('A S S I G N  Y O U R  P R O F I C I E N C I E S')
       print_line
-      display_proficiencies(character)
+      display_proficiencies
       message = ""
 
-      print_stat_and_label("\nCurrent Points to Assign: ", character.assign_proficiency_points.to_s)
+      print_stat_and_label("\nCurrent Points to Assign: ", @available_proficiency_points.to_s)
       print_line
     end
   end
