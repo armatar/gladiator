@@ -235,7 +235,18 @@ class Story
   end
 
   def day_two
-    print_basic_message("made it to day 2!")
+    main_menu
+    gets.chomp
+  end
+
+  def main_menu
+    if @player_character.available_proficiency_points > 0 || @player_character.available_attribute_points > 0
+      available_level_up = true
+    else
+      available_level_up = false
+    end
+
+    print_main_menu(@date, @player_character, available_level_up)
   end
 
 

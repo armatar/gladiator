@@ -350,7 +350,8 @@ module UI
   module StoryDisplay
     include DisplayShortcuts
 
-    def print_main_menu(date, character)
+    def print_main_menu(date, character, availble_points)
+      system "clear"
       print_line
       print_title("M A I N  M E N U")
       print_line
@@ -358,8 +359,11 @@ module UI
       puts "> " + Date::MONTHNAMES[date.month] + " " + date.day.to_s + ", Year " + date.year.to_s
       print_line
       puts "1. [ train ] ".ljust(35) + "2. [ check arena schedule ]" 
-      puts "3. [ cast a spell ] ".ljust(35) + "4. [ perform a combat maneuver ]"
+      puts "3. [ go into town ] ".ljust(35) + "4. [ not sure yet ]"
       puts "5. [ save your game ] ".ljust(35) + "6. [ load a save ]"
+      if availble_points
+        puts "7. [ " + Paint["level up !!", :red, :bold] + " ]"
+      end
     end
   end
 

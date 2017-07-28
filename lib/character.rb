@@ -13,9 +13,9 @@ class Character
   attr_reader :max_hp, :max_mana, :str, :dex, :con, :mag, :cha
   attr_reader :name, :race, :level, :str_modifier, :dex_modifier, :con_modifier, :mag_modifier, :cha_modifier 
   attr_reader :ac, :mag_resist, :cbm, :cbm_def, :bab, :item_list
-  attr_reader :items, :shield_bonus, :armor_bonus, :equipped_weapon, :equipped_shield
-  attr_reader :attack, :one_hand_atk, :dual_wield_atk, :two_hand_atk, :unarmed_atk
-  attr_reader :damage, :one_hand_damage, :dual_wield_damage, :unarmed_damage, :two_hand_damage
+  attr_reader :items, :shield_bonus, :armor_bonus
+  attr_reader :attack, :one_hand_atk, :dual_wield_atk, :two_hand_atk, :unarmed_atk, :staff_atk
+  attr_reader :damage, :one_hand_damage, :dual_wield_damage, :unarmed_damage, :two_hand_damage, :staff_damage
   attr_reader :spell_failure_chance, :inventory
   attr_reader :one_hand_prof, :two_hand_prof, :dual_wield_prof, :unarmed_prof, :magic_prof
   attr_reader :assign_attribute_points, :assign_proficiency_points, :max_proficency
@@ -147,23 +147,23 @@ class Character
       return @spell_failure_chance
     when "dex modifier"
       @dex_modifier += points_to_update
-      calculate_full_stats
+      calculate_all_variable_stats
       return @dex_modifier
     when "str modifier"
       @str_modifier += points_to_update
-      calculate_full_stats
+      calculate_all_variable_stats
       return @str_modifier
     when "con modifier"
       @con_modifier += points_to_update
-      calculate_full_stats
+      calculate_all_variable_stats
       return @con_modifier
     when "mag modifier"
       @mag_modifier += points_to_update
-      calculate_full_stats
+      calculate_all_variable_stats
       return @mag_modifier
     when "cha modifier"
       @cha_modifier += points_to_update
-      calculate_full_stats
+      calculate_all_variable_stats
       return @cha_modifier
     end
   end

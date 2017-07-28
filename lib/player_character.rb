@@ -7,7 +7,7 @@ class PlayerCharacter < Character
   include LevelUpCalculations
 
   attr_accessor :date, :hook
-  attr_reader :current_exp, :exp_needed, :wealth, :fame, :available_proficiency_points, :total_proficiency_points
+  attr_reader :current_exp, :exp_needed, :wealth, :fame, :available_proficiency_points, :total_proficiency_points, :available_attribute_points
 
   def initialize(name, race)
     super(name, race)
@@ -68,7 +68,7 @@ class PlayerCharacter < Character
   def set_proficiencies
     continue = false
     message = ""
-    @get_min_and_max_stats
+    get_min_and_max_stats
 
     while !continue
       assign_proficiencies_header(message)
@@ -88,6 +88,8 @@ class PlayerCharacter < Character
   def set_stats
     continue = false
     message = ""
+    get_min_and_max_stats
+
     while !continue
       tip = ""
       assign_attributes_header(message)
@@ -293,11 +295,14 @@ class PlayerCharacter < Character
         elsif @inventory[answer][:type] != "shield"
           system "clear"
           print_error_message("That's not a shield...")
+        elsif @equipped_weapon[:type] != "1-hand weapon"
+          system "clear"
+          print_error_message("You can only equip a shield when you are wielding a one handed weapon!")
         else
           confirm = double_check_specific("you want to equip #{answer}")
           if confirm
             @equipped_shield = @inventory[answer]
-            calculate_full_stats
+            calculate_all_variable_stats
             string = "You have equipped #{@equipped_shield[:name]}!\n"
             string += "Your new ac is: #{@ac}.\n\n"
             return string
@@ -347,7 +352,7 @@ class PlayerCharacter < Character
                 end
               end
             end
-            calculate_full_stats
+            calculate_all_variable_stats
             return string
           else
             system "clear"
@@ -389,7 +394,7 @@ class PlayerCharacter < Character
           if confirm
             string = "You have used a #{answer}!\n\n"
             implement_item_effect(@inventory[answer])
-            calculate_full_stats
+            calculate_all_variable_stats
             return string
           else
             system "clear"

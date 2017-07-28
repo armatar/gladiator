@@ -1,15 +1,14 @@
 require_relative "player_character.rb"
 
-class TestCharacter < PlayerCharacter
+class CharacterForUnitTests < PlayerCharacter
 
   def initialize(name, race)
     super(name, race)
   end
 
-  # this function is just so I can use pre-generated character for unit tests and for testing combat. see testing_combat.rb
   def create_test_character
     @level = 3
-    @str = 10 # affects sword/unarmed attack, cbm, cbm_def
+    @str = 12 # affects sword/unarmed attack, cbm, cbm_def
     @dex = 18 # affects ac, cbm_def
     @con = 14 # affects hp
     @mag = 15 # affects mag_resist, mag_dc
@@ -20,6 +19,9 @@ class TestCharacter < PlayerCharacter
     @two_hand_prof = 3
     @magic_prof = 2
     @unarmed_prof = 1
+    @available_proficiency_points = 2
+    @available_attribute_points = 4
+    @max_proficency = 10
 
     calculate_initial_stats
 
@@ -33,5 +35,9 @@ class TestCharacter < PlayerCharacter
     add_item("bronze dual swords", @items.item_list["bronze dual swords"])
     add_item("health potion", @items.item_list["health potion"])
     add_item("bronze shield", @items.item_list["bronze shield"])
+
+    @equipped_weapon = @inventory["bronze sword"]
+
+    calculate_auto_attack
   end
 end

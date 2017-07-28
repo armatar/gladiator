@@ -1,40 +1,116 @@
 require 'minitest/autorun'
-require_relative "../lib/player_character.rb"
+require_relative "../lib/character_for_unit_tests.rb"
 
 class PlayerCharacterTest < Minitest::Test
 
   def setup
-    @player_character = Player_Character.new("Test Character", "test")
-    @player_character.create_test_character
+    @test_character = CharacterForUnitTests.new("Test Character", "test")
+    @test_character.create_test_character
   end
 
-  def test_base_calculations
-    assert_equal(2, @player_character.bab, "Bab is not 3. It is: #{@player_character.bab}")
-    assert_equal(18, @player_character.ac, "Bab is not 18, It is: #{@player_character.ac}")
-
-    #hp can be random number between 9 and 18 + 2 so between 11 and 20, 3 times as level 3
-    assert(@player_character.hp.between?(33, 60), "HP is not in valid range. It is: #{@player_character.hp}")
+  def capture_stdout(&block)
+    original_stdout = $stdout
+    $stdout = fake = StringIO.new
+    begin
+      yield
+    ensure
+      $stdout = original_stdout
+    end
+    fake.string
   end
 
-  def test_magic_resist_calculation
-    assert_equal(4, @player_character.mag_resist, "Magic resist is not 6. It is: #{@player_character.mag_resist}")
+  def with_stdin
+    stdin = $stdin             # remember $stdin
+    $stdin, write = IO.pipe    # create pipe assigning its "read end" to $stdin
+    yield write                # pass pipe's "write end" to block
+  ensure
+    write.close                # close pipe
+    $stdin = stdin             # restore $stdin
   end
 
-  def test_cbm_calculation
-    assert_equal(3, @player_character.cbm, "CBM is not 3. It is: #{@player_character.cbm}")
-
-    assert_equal(17, @player_character.cbm_def, "CBM defence is not 17. It is: #{@player_character.cbm_def}")
+  def test_if_have_shield
+    assert(@test_character.check_if_have_shield, "There is no shield in the inventory.")
   end
 
-  def test_attack_and_damage_calculation
-    assert_equal(3, @player_character.one_hand_atk, 
-                 "One Hand Attack is not 3. It is: #{@player_character.one_hand_atk}")
+  def test_equip_weapon
+    with_stdin do |user|
+      user.puts "bronze dual swords"
+      user.puts "yes"
+      capture_stdout { @test_character.equip_weapon } 
+      assert_equal(@test_character.equipped_weapon[:name], "bronze dual swords", "Equipped weapon is #{@test_character.equipped_weapon[:name]}")
+    end
+  end
 
-    assert_equal(2, @player_character.dual_wield_damage, 
-                 "Dual Wield Damage is not 2. It is: #{@player_character.dual_wield_damage}")
+  def test_equipping_shield
+    with_stdin do |user|
+      @test_character.equipped_weapon = @test_character.inventory["bronze dual swords"]
+      user.puts "bronze shield"
+      user.puts "back"
+      capture_stdout { @test_character.equip_shield }
+      assert(!@test_character.equipped_shield, "Equipped weapon is #{@test_character.equipped_shield}")
+    end
 
-    assert_equal(3, @player_character.attack, "Attack is not 3. It is: #{@player_character.attack}")
-    assert_equal(1, @player_character.damage, "Damage is not 1. It is: #{@player_character.damage}")
+    with_stdin do |user|
+      @test_character.equipped_weapon = @test_character.inventory["bronze sword"]
+      user.puts "bronze shield"
+      user.puts "yes"
+      capture_stdout { @test_character.equip_shield }
+      assert_equal("bronze shield", @test_character.equipped_shield[:name], "Equipped weapon is #{@test_character.equipped_shield[:name]}")
+    end
+  end
+
+  def test_set_stats
+    with_stdin do |user|
+      user.puts "strength"
+      user.puts "add"
+      user.puts "2"
+      user.puts "confirm"
+      user.puts "yes"
+      capture_stdout { @test_character.set_stats }
+      assert_equal(2, @test_character.str_modifier, "Str_modifier is #{@test_character.str_modifier}")
+    end
+
+    with_stdin do |user|
+      user.puts "strength"
+      user.puts "add"
+      user.puts "2"
+      user.puts "strength"
+      user.puts "subtract"
+      user.puts "2"
+      user.puts "dexterity"
+      user.puts "add"
+      user.puts "2"
+      user.puts "confirm"
+      user.puts "yes"
+
+      capture_stdout { @test_character.set_stats }
+      assert_equal(2, @test_character.str_modifier, "Str_modifier is #{@test_character.str_modifier}")
+      assert_equal(5, @test_character.dex_modifier, "Dex_modifier is #{@test_character.dex_modifier}")
+    end
+  end
+
+  def test_set_proficiencies
+    with_stdin do |user|
+      user.puts "1"
+      user.puts "add"
+      user.puts "1"
+      user.puts "confirm"
+      user.puts "yes"
+      capture_stdout { @test_character.set_proficiencies }
+      assert_equal(3, @test_character.one_hand_prof, "One_hand_prof is #{@test_character.one_hand_prof}")
+    end
+
+    with_stdin do |user|
+      user.puts "1"
+      user.puts "subtract"
+      user.puts "1"
+      user.puts "0"
+      user.puts "confirm"
+      user.puts "yes"
+      capture_stdout { @test_character.set_proficiencies }
+      assert_equal(3, @test_character.one_hand_prof, "One_hand_prof is #{@test_character.one_hand_prof}")
+    end
+
   end
 
 end

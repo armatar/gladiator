@@ -66,6 +66,7 @@ module CharacterCalculations
     calculate_dual_wield
     calculate_two_hand
     calculate_unarmed
+    calculate_staff
     calculate_auto_attack
   end
 
@@ -90,6 +91,11 @@ module CharacterCalculations
     @unarmed_damage = get_skill_damage(@unarmed_prof)
   end
 
+  def calculate_staff
+    @staff_atk = get_skill_atk(@magic_prof)
+    @staff_damage = get_skill_damage(@magic_prof)
+  end
+
   def calculate_auto_attack
     @weapon_enchantment = @equipped_weapon[:enchantment]
 
@@ -102,6 +108,12 @@ module CharacterCalculations
     elsif @equipped_weapon[:type] == "unarmed weapon"
       @attack = @unarmed_atk + @weapon_enchantment
       @damage = @unarmed_damage + @weapon_enchantment
+    elsif @equipped_weapon[:type] == "dual wield weapon"
+      @attack = @dual_wield_atk + @weapon_enchantment
+      @damage = @dual_wield_damage + @weapon_enchantment
+    elsif @equipped_weapon[:type] == "staff"
+      @attack = @staff_atk + @weapon_enchantment
+      @damage = @staff_damage + @weapon_enchantment
     end
   end
 

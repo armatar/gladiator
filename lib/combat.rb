@@ -53,6 +53,9 @@ class Combat
         if result == "dead"
           clear_out_player_effects
           return result
+        elsif result == "kill" || result == "spare"
+          clear_out_player_effects
+          return result
         end
       elsif result
       end

@@ -45,7 +45,7 @@ class Saves
         player_character = load_save(answer)
         system "clear"
         puts "Sweet! We have loaded the character #{player_character.name.capitalize}! \nHere are your current stats:"
-        display_character_sheet(player_character)
+        player_character.display_character_sheet_from_character
         return player_character
       else
         answer = ask_question("We don't have a save file for that name. Want to try another?", ["yes", "no"], false)
