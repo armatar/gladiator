@@ -3,13 +3,16 @@ require_relative 'combat.rb'
 require_relative 'saves.rb'
 require_relative "characters/player_character.rb"
 require_relative "factories/random_enemy_factory.rb"
+require_relative "story_modules/specific_encountered_enemies.rb"
 
 class Story
   include UserInterface
+  include SpecificEncounteredEnemies
 
   def initialize
     @saves = Saves.new
     @date = Date.new(1,6,1)
+    instantiate_enemies
   end
 
   def start_game
@@ -204,10 +207,8 @@ class Story
     string += "A horn suddenly blares in the distance, signaling the beginning of the battle..."
 
     write_to_screen(string)
-    first_enemy = RandomEnemyFactory.new(1)
-    first_enemy.create_random_enemy("First Enemy", "Eastern")
 
-    first_fight = Combat.new(@player_character, first_enemy.random_enemy)
+    first_fight = Combat.new(@player_character, @first_enemy)
 
     result = first_fight.turn_based_combat
     if result == "dead"

@@ -3,6 +3,7 @@ GEM
   specs:
     byebug (9.0.6)
     paint (2.0.0)
+    require_all (1.4.0)
 
 PLATFORMS
   ruby
@@ -10,6 +11,7 @@ PLATFORMS
 DEPENDENCIES
   byebug!
   paint!
+  require_all!
 
 BUNDLED WITH
    1.15.3
