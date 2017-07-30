@@ -1,8 +1,8 @@
 require "yaml"
-require_relative "interface.rb"
+require_relative "user_interface.rb"
 
 class Saves
-  include Interface
+  include UserInterface
 
   attr_reader :saves
   
@@ -108,7 +108,7 @@ class Saves
   end
 
   def get_full_file_path(save_name)
-    file = File.join(@directory, "#{save_name}.yml")
+    file = File.join(@directory, "save_files/#{save_name}.yml")
     return file
   end
 

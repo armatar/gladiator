@@ -1,8 +1,8 @@
-require_relative "Interface"
+require_relative "../user_interface.rb"
 
 module SpellEffects
 
-  include Interface
+  include UserInterface
 
   def check_if_spell_is_resisted(spell, caster, target)
     mag_dc = caster.get_magic_dc(spell[:level])

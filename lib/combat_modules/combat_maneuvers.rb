@@ -1,7 +1,7 @@
-require_relative "interface.rb"
+require_relative "../user_interface.rb"
 
 module CombatManeuvers
-  include Interface
+  include UserInterface
 
   attr_reader :maneuvers
 

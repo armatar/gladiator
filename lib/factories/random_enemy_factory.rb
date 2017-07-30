@@ -1,4 +1,4 @@
-require_relative "enemies.rb"
+require_relative "../characters/enemies.rb"
 require "byebug"
 
 class RandomEnemyFactory

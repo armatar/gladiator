@@ -1,5 +1,5 @@
-require_relative "character.rb"
-require_relative "level_up_calculations.rb"
+require_relative "player_character_modules/level_up_calculations.rb"
+require_relative "../character.rb"
 
 class PlayerCharacter < Character
   #the class that manages the actual player character

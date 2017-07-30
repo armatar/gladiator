@@ -1,4 +1,4 @@
-require_relative "character.rb"
+require_relative "../character.rb"
 
 class Enemies < Character
 

@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative "../lib/character_for_unit_tests.rb"
+require_relative "../lib/characters/player_characters/character_for_unit_tests.rb"
 
 class PlayerCharacterTest < Minitest::Test
 
@@ -110,7 +110,26 @@ class PlayerCharacterTest < Minitest::Test
       capture_stdout { @test_character.set_proficiencies }
       assert_equal(3, @test_character.one_hand_prof, "One_hand_prof is #{@test_character.one_hand_prof}")
     end
+  end
 
+  def test_use_item
+    @test_character.hp -= 10
+    with_stdin do |user|
+      user.puts "health potion"
+      user.puts "yes"
+      capture_stdout { @test_character.use_item }
+      assert_equal(@test_character.max_hp, @test_character.hp, "HP is #{@test_character.hp}")
+    end
+  end
+
+  def test_add_item
+    @test_character.add_item("potion", "potion description")
+    assert(@test_character.inventory["potion"], "Items named potion does not exist in inventory.")
+  end
+
+  def test_update_stat
+    @test_character.update_stat("magic resist", 1)
+    assert_equal(6, @test_character.mag_resist, "Magic resist = #{@test_character.mag_resist}")
   end
 
 end

@@ -1,12 +1,12 @@
 require 'byebug'
-require_relative 'interface.rb'
+require_relative 'user_interface.rb'
 require_relative 'items.rb'
 require_relative "spells.rb"
-require_relative 'character_calculations.rb'
+require_relative 'character_modules/character_calculations.rb'
 
 class Character
   # character module is a basis for what any character ( player or enemy ) should be.
-  include Interface
+  include UserInterface
   include CharacterCalculations
 
   attr_accessor :hp, :mana, :equipped_weapon, :equipped_shield

@@ -1,6 +1,6 @@
-require_relative "ui.rb"
+require_relative "ui/ui.rb"
 
-module Interface
+module UserInterface
   include UI::Interact
   include UI::CharacterDisplay
   include UI::ItemDisplay

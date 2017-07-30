@@ -176,9 +176,9 @@ max_dex_bonus_for_ac: false
 max_proficency: 10
 date: 1
 hook: 2
-min_str: 8
-min_dex: 8
-min_con: 8
+min_str: 18
+min_dex: 18
+min_con: 18
 min_mag: 8
 min_cha: 8
 max_str: 18
@@ -198,8 +198,8 @@ exp_needed: 100
 available_attribute_points: 0
 total_proficiency_points: 1
 available_proficiency_points: 1
-hp: 21
-max_hp: 21
+hp: 33
+max_hp: 33
 bab: 1
 ac: 14
 one_hand_atk: 5
@@ -210,6 +210,8 @@ two_hand_atk: 5
 two_hand_damage: 6
 unarmed_atk: 5
 unarmed_damage: 4
+staff_atk: 5
+staff_damage: 4
 weapon_enchantment: 0
 attack: 5
 damage: 4

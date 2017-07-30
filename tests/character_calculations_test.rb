@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative "../lib/character_for_unit_tests.rb"
+require_relative "../lib/characters/player_characters/character_for_unit_tests.rb"
 
 class CharacterCalculationsTest < Minitest::Test
 

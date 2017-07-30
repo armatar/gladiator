@@ -1,11 +1,11 @@
 require 'paint'
-require_relative 'interface.rb'
-require_relative 'player_character.rb'
+require_relative 'user_interface.rb'
+require_relative 'characters/player_character.rb'
 require_relative "combat_modules.rb"
 
 class Combat
 
-  include Interface
+  include UserInterface
   include CombatModules
 
   def initialize(ally, enemy)

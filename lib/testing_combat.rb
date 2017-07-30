@@ -1,6 +1,6 @@
 require_relative "combat.rb"
-require_relative "random_enemy_factory.rb"
-require_relative "test_character.rb"
+require_relative "factories/random_enemy_factory.rb"
+require_relative "characters/player_characters/test_character.rb"
 
 class TestingCombat
 

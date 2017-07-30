@@ -1,8 +1,8 @@
 require "byebug"
-require_relative 'interface.rb'
+require_relative 'user_interface.rb'
 
 class Items
-  include Interface
+  include UserInterface
 
   attr_reader :item_list, :default_weapon
 
