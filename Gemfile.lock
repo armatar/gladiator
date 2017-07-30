@@ -3,9 +3,6 @@ GEM
   specs:
     byebug (9.0.6)
     paint (2.0.0)
-    terminal-table (1.8.0)
-      unicode-display_width (~> 1.1, >= 1.1.1)
-    unicode-display_width (1.3.0)
 
 PLATFORMS
   ruby
@@ -13,7 +10,6 @@ PLATFORMS
 DEPENDENCIES
   byebug!
   paint!
-  terminal-table!
 
 BUNDLED WITH
-   1.14.6
+   1.15.3
