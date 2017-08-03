@@ -1,17 +1,16 @@
-require_relative "../characters/enemies.rb"
 require "byebug"
 
 class RandomEnemyFactory
 
   attr_reader :random_enemy
 
-  def initialize(level)
-    @random_enemy = Enemies.new(get_random_name, get_random_race)
-    @random_enemy.character_base
-    @random_enemy.set_level(level)
+  def initialize
   end
 
-  def create_random_enemy(name, race)
+  def create_random_enemy(enemy, level)
+    @random_enemy = enemy
+    @random_enemy.character_base
+    @random_enemy.set_level(level)
     get_random_character_base
     get_skills
     get_stat_max
@@ -22,6 +21,7 @@ class RandomEnemyFactory
     @random_enemy.set_base_proficiency_points(@one_hand_prof, @two_hand_prof, @dual_wield_prof, @magic_prof, @unarmed_prof)
     get_equipped_weapon
     @random_enemy.calculate_initial_stats
+    return @random_enemy
   end
 
   def get_random_character_base
@@ -38,20 +38,13 @@ class RandomEnemyFactory
     @unarmed_prof = 0
   end
 
-  def get_random_name
-    names = ["Eadbrand", "Anpher", "Sararich", "Anealjohn", "Ansam", "Rahbeo", "Nesha", "Achris", 
-             "Geor", "Phiesu", "Soncar", "Lalen", "Serehelm", "Zanan", "Cenfred", "Clachar", "Vidguth"]
-
-    return names.sample
-  end
-
-  def get_random_race
-    races = ["drai", "relic", "aloiln", "tiersmen"]
-    return races.sample
+  def get_points_to_assign
+    points_to_assign = (@random_enemy.level/4).floor + 20
+    return points_to_assign
   end
 
   def get_random_base_stats
-    points_to_assign = (@random_enemy.level/4).floor + 20
+    points_to_assign = get_points_to_assign
     counter = 0
     continue = false
     while !continue

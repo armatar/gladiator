@@ -34,6 +34,7 @@ module DayOne
               "Well, I suppose we'll see."
 
     write_to_screen(string)
+    @player_character.hook += 1
   end
 
   def first_battle
@@ -70,14 +71,46 @@ module DayOne
     elsif result == "spare"
       system "clear"
 
-      string = "You allow your enemy to live, much to the displeasure of the crowd. But as the \n"
-               "nameless man looks up at you, you find gratitude in his eyes.\n"
+      string = "You allow your enemy to live, much to the displeasure of the crowd. But as the \n" +
+               "defeated man looks up at you, you find gratitude in his eyes.\n\n"
     end
 
-    string += "Your head begins to swim, exhaustion and draining adrenline making you weak in the \n" +
-               "knees "
+    string += "You have won your first victory this day but to reach your dream, you must do more \n" +
+              "than fight mindless battles. You know that a key piece to a successful gladiator is \n" +
+              "sponsorship. Your two fists and your sheer force of will may have gotten you through \n" +
+              "this battle, but to become the greatest gladiator in the eyes of a God, you will need \n" +
+              "weapons, armor, experience, exposure -- all things that as you are, would be difficult \n" +
+              "if not impossible to come by.\n\n"
+    string += "Lucky for you, there were thousands of people to witness your victory. Maybe one of \n" +
+              "of them will see in you the potential you see in yourself..."
 
     write_to_screen(string)
     @player_character.hook += 1
+  end
+
+  def meeting_sponsor
+    system "clear"
+    if @first_enemy_wayland.is_alive
+      @sponsor = SponsorWilliam.new
+    else
+      @sponsor = SponsorTarek.new
+    end
+
+    @player_character.sponsor = @sponsor
+
+    string = "You spend some time outside of the arena, hoping that someone will have taken notice, \n" +
+             "however the crowd begins to disperse and you've yet to have a single offer. It took you \n" +
+             "months to secure a place at the arena as a new, unsponsored, unnamed gladiator, and  \n" +
+             "you are aware that you may not be allowed a second chance if you're not picked up today. \n\n"
+    string += "The crowd has almost completely gone now and you are preparing yourself to give up for \n" +
+              "the day when you hear a call from behind you. \n\n"
+    string += '"' + "You there -- gladiator!" + '"' + "\n\n"
+    string += "Quickly, you turn to meet the voice, hoping that perhaps luck has finally smiled upon you."
+
+    write_to_screen(string)
+    
+    system "clear"
+    string = @sponsor.introduction
+    write_to_screen(string)
   end
 end

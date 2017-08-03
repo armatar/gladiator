@@ -129,6 +129,7 @@ class Combat
           @message += "#{@enemy.name.capitalize} breaks from the grapple!\n\n"
           reverse_cbm("enemy", @current_enemy_cbm)
           @current_enemy_cbm = false
+          @grappled = false
           return false
         else
           @message += "#{@enemy.name.capitalize} fails to break from the grapple!\n\n"

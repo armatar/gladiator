@@ -6,8 +6,9 @@ class PlayerCharacter < Character
 
   include LevelUpCalculations
 
-  attr_accessor :date, :hook
-  attr_reader :current_exp, :exp_needed, :wealth, :fame, :available_proficiency_points, :total_proficiency_points, :available_attribute_points
+  attr_accessor :date, :hook, :sponsor
+  attr_reader :current_exp, :exp_needed, :wealth, :fame, :available_proficiency_points
+  attr_reader :total_proficiency_points, :available_attribute_points
 
   def initialize(name, race)
     super(name, race)

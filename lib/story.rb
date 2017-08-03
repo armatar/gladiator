@@ -1,11 +1,15 @@
+require "require_all"
+
 require_relative 'all_days.rb'
 require_relative 'user_interface.rb'
 require_relative 'combat.rb'
 require_relative 'saves.rb'
 require_relative "characters/player_character.rb"
 require_relative "factories/random_enemy_factory.rb"
+require_relative "characters/enemies.rb"
 require_relative "story_modules/specific_encountered_enemies.rb"
 require_relative "story_modules/pre_game_functions.rb"
+require_rel "sponsors"
 
 class Story
   include UserInterface
@@ -31,13 +35,14 @@ class Story
         case @player_character.hook
         when 1
           new_game
-          @player_character.hook += 1
           @saves.autosave(@date, @player_character)
         when 2
-        first_battle
+          first_battle
+          @saves.autosave(@date, @player_character)
         when 3
-        new_day
-
+          meeting_sponsor
+        when 4
+          new_day
         end
       #when 2
       #  day_two

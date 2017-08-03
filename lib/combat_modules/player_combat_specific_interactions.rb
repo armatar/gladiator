@@ -28,12 +28,14 @@ module PlayerCombatSpecificInteractions
         @message += "You fail to pin your enemy and they escape from your grasp.\n\n"
         reverse_cbm("enemy", @current_enemy_cbm)
         @current_enemy_cbm = false
+        @grappled = false
         return false
       end
     elsif answer == "release"
       @message += "You release your enemy from your grapple.\n\n"
       reverse_cbm("enemy", @current_enemy_cbm)
       @current_enemy_cbm = false
+      @grappled = false
       return false
     else
       print_error_message("Please type either 'pin' or 'release'.") 
