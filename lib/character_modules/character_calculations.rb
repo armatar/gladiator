@@ -3,118 +3,127 @@ module CharacterCalculations
 
   def calculate_initial_stats
     update_modifiers
-    calculate_first_hp
+    set_first_hp(@level, get_hp_range(@con_modifier), @con_modifier)
     calculate_all_variable_stats
   end
 
   def calculate_all_variable_stats
-    calculate_bab
-    calculate_ac
-    calculate_shield_bonus
+    calculate_bab(@level)
+    calculate_shield_bonus(@equipped_shield)
+    calculate_ac(get_max_dex_bonus_for_ac(@max_dex_bonus_for_ac, @dex_modifier), @shield_bonus, @armor_bonus)
     calculate_weapon_stats
-    calculate_magic_resist
+    calculate_magic_resist(@mag_modifier, @cha_modifier, @magic_prof)
     calculate_cbm
     calculate_mana
   end
 
-  def calculate_first_hp
+  def set_first_hp(level, range, con_modifier)
     hp = 0
-    @level.times do
-      if @con_modifier + 1 < 2
-        max = 6
-      else
-        max = 6 * (@con_modifier+1)
-      end
-      min = max/2
-      hp += rand(min..max) + @con_modifier
+    level.times do
+      hp += rand(range[0]..range[1]) + con_modifier
     end
     @hp = hp
     @max_hp = hp
   end
 
-  def calculate_bab
-    @bab = (@level/2) + 1
-  end
-
-  def calculate_ac
-    if !@max_dex_bonus_for_ac
-      allowed_dex = @dex_modifier
+  def get_hp_range(con_modifier)
+    min = 1
+    max = 1
+    if con_modifier + 1 < 2
+      max = 6
     else
-      allowed_dex = @max_dex_bonus_for_ac
+      max = 6 * (con_modifier+1)
     end
-    if !@shield_bonus
-      @shield_bonus = 0
-    end
+    min = max/2
 
-    if !@armor_bonus
-      @armor_bonus = 0
-    end
-
-    @ac = allowed_dex + @shield_bonus + @armor_bonus + 10
+    range = [min, max]
+    return range
   end
 
-  def calculate_shield_bonus
+  def calculate_bab(level)
+    @bab = (level/2).floor + 1
+  end
+
+  def calculate_ac(allowed_dex, shield_bonus, armor_bonus)
+    @ac = allowed_dex + shield_bonus + armor_bonus + 10
+  end
+
+  def get_max_dex_bonus_for_ac(max_dex_bonus_for_ac, dex_modifier)
+    if !max_dex_bonus_for_ac
+      allowed_dex = dex_modifier
+    else
+      allowed_dex = max_dex_bonus_for_ac
+    end
+    return allowed_dex
+  end
+
+  def calculate_shield_bonus(equipped_shield)
     if @equipped_shield
-      @shield_bonus = @equipped_shield[:defense_bonus] + @equipped_shield[:enchantment]
+      @shield_bonus = equipped_shield[:defense_bonus] + equipped_shield[:enchantment]
     else
       @shield_bonus = 0
     end
   end
 
   def calculate_weapon_stats
-    calculate_one_hand
-    calculate_dual_wield
-    calculate_two_hand
-    calculate_unarmed
-    calculate_staff
-    calculate_auto_attack
+    set_one_hand
+    set_dual_wield
+    set_two_hand
+    set_unarmed
+    set_staff
+    set_auto_attack(get_weapon_enchantment(@equipped_weapon), get_attack_and_damage_array)
   end
 
-  def calculate_one_hand
+  def set_one_hand
     @one_hand_atk = get_skill_atk(@one_hand_prof)
     @one_hand_damage = get_skill_damage(@one_hand_prof)
   end
 
-  def calculate_dual_wield
+  def set_dual_wield
     @dual_wield_atk = get_skill_atk(@dual_wield_prof)
     @dual_wield_damage = get_skill_damage(@dual_wield_prof)
   end
 
-  def calculate_two_hand
+  def set_two_hand
     @two_hand_atk = get_skill_atk(@two_hand_prof)
     damage = get_skill_damage(@two_hand_prof)
     @two_hand_damage = (damage * 1.5).floor
   end
 
-  def calculate_unarmed
+  def set_unarmed
     @unarmed_atk = get_skill_atk(@unarmed_prof)
     @unarmed_damage = get_skill_damage(@unarmed_prof)
   end
 
-  def calculate_staff
+  def set_staff
     @staff_atk = get_skill_atk(@magic_prof)
     @staff_damage = get_skill_damage(@magic_prof)
   end
 
-  def calculate_auto_attack
-    @weapon_enchantment = @equipped_weapon[:enchantment]
+  def get_weapon_enchantment(equipped_weapon)
+    weapon_enchantment = equipped_weapon[:enchantment]
+    return weapon_enchantment
+  end
 
+  def get_attack_and_damage_array
+    attack_and_damage_array = ""
     if @equipped_weapon[:type] == "1-hand weapon"
-      @attack = @one_hand_atk + @weapon_enchantment
-      @damage = @one_hand_damage + @weapon_enchantment
+      attack_and_damage_array = [@one_hand_atk, @one_hand_damage]
     elsif @equipped_weapon[:type] == "2-hand weapon"
-      @attack = @two_hand_atk + @weapon_enchantment
-      @damage = (@one_hand_damage * 1.5).floor + @weapon_enchantment
+      attack_and_damage_array = [@two_hand_atk, @two_hand_damage]
     elsif @equipped_weapon[:type] == "unarmed weapon"
-      @attack = @unarmed_atk + @weapon_enchantment
-      @damage = @unarmed_damage + @weapon_enchantment
+      attack_and_damage_array = [@unarmed_atk, @unarmed_damage]
     elsif @equipped_weapon[:type] == "dual wield weapon"
-      @attack = @dual_wield_atk + @weapon_enchantment
-      @damage = @dual_wield_damage + @weapon_enchantment
+      attack_and_damage_array = [@dual_wield_atk, @dual_wield_damage]
     elsif @equipped_weapon[:type] == "staff"
-      @attack = @staff_atk + @weapon_enchantment
-      @damage = @staff_damage + @weapon_enchantment
+      attack_and_damage_array = [@staff_atk, @staff_damage]
     end
+    return attack_and_damage_array
+  end
+
+  def set_auto_attack(weapon_enchantment, attack_and_damage_array)
+    @attack = attack_and_damage_array[0]
+    @damage = attack_and_damage_array[1]
   end
 
   def get_skill_atk(skill)
@@ -127,8 +136,8 @@ module CharacterCalculations
     return damage
   end
 
-  def calculate_magic_resist
-    @mag_resist = @mag_modifier + (@cha_modifier/2).floor + @magic_prof
+  def calculate_magic_resist(mag_modifier, cha_modifier, magic_prof)
+    @mag_resist = mag_modifier + (cha_modifier/2).floor + magic_prof
   end
 
   #cbm stands for combat maneuver

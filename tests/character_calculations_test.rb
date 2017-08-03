@@ -8,34 +8,41 @@ class CharacterCalculationsTest < Minitest::Test
     @test_character.create_test_character
   end
 
-  def test_base_calculations
-    assert_equal(2, @test_character.bab, "Bab is not 2. It is: #{@test_character.bab}")
-    assert_equal(14, @test_character.ac, "AC is not 18, It is: #{@test_character.ac}")
-
-    #hp can be random number between 9 and 18 + 2 so between 11 and 20, 3 times as level 3
-    assert(@test_character.hp.between?(33, 60), "HP is not in valid range. It is: #{@test_character.hp}")
+  def test_initial_hp_calculations
+    @test_character.set_first_hp(5, [15,30], 4)
+    min = 95
+    max = 170
+    message = "When the character's level is 5, their con modifier is 4, and the range of die roll is 15-30, " +
+              "their HP should be between #{min} and #{max}. HP was #{@test_character.hp}"
+    assert(@test_character.hp.between?(min,max), message)
   end
 
-  def test_magic_resist_calculation
-    assert_equal(5, @test_character.mag_resist, "Magic resist is not 5. It is: #{@test_character.mag_resist}")
+  def test_get_hp_range
+    assert_equal([9,18], @test_character.get_hp_range(2),
+      "When the character's con modifier is 2, the hp ranged returned should be [9,18]" )
   end
 
-  def test_cbm_calculation
-    assert_equal(4, @test_character.cbm, "CBM is not 4. It is: #{@test_character.cbm}")
-
-    assert_equal(18, @test_character.cbm_def, "CBM defence is not 18. It is: #{@test_character.cbm_def}")
+  def test_calculate_bab
+    level_groups = {1 => [1], 2 => [2, 3], 3 => [4, 5]}
+    level_groups.each_pair do |answer, levels|
+      levels.each do |level|
+        assert_equal(answer, @test_character.calculate_bab(level), 
+          "When the character's level is #{level}, the base attack bonus should be #{answer}" )
+      end
+    end
   end
 
-  def test_attack_and_damage_calculation
-    assert_equal(5, @test_character.one_hand_atk, 
-                 "One Hand Attack is not 5. It is: #{@test_character.one_hand_atk}")
-
-    assert_equal(6, @test_character.two_hand_damage, 
-                 "Two Hand Damage is not 6. It is: #{@test_character.two_hand_damage}")
-
-    assert_equal("bronze sword", @test_character.equipped_weapon[:name])
-    assert_equal(5, @test_character.attack, "Attack is not 5. It is: #{@test_character.attack}")
-    assert_equal(3, @test_character.damage, "Damage is not 3. It is: #{@test_character.damage}")
+  def test_calculate_magic_resist
+    magic_modifier = 4
+    magic_prof = 2
+    answer_and_cha_modifier = {6 => [1], 7 => [2, 3], 8 => [4, 5]}
+    answer_and_cha_modifier.each_pair do |answer, cha_modifiers|
+      cha_modifiers.each do |cha_modifier|
+        message = "When the character's magic modifier is #{magic_modifier}, magic proficiency is " +
+                  "#{magic_prof}, and charisma modifier is #{cha_modifier}, the magic resist should " +
+                  "be #{answer}."
+        assert_equal(answer, @test_character.calculate_magic_resist(magic_modifier, cha_modifier, magic_prof), message )
+      end
+    end
   end
-
 end

@@ -37,7 +37,5 @@ class CharacterForUnitTests < PlayerCharacter
     add_item("bronze shield", @items.item_list["bronze shield"])
 
     @equipped_weapon = @inventory["bronze sword"]
-
-    calculate_auto_attack
   end
 end
