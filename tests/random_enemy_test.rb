@@ -40,5 +40,15 @@ class RandomEnemyTest < Minitest::Test
     assert_equal(2, @enemy_factory.random_enemy.one_hand_prof, 
       "When the proficiency 1-hand weapon is selected twice, the one_hand_prof variable for the random enemy should be 2.")
   end
+
+  def test_get_equipped_weapon
+    @enemy_factory.get_equipped_weapon("magic")
+    assert_equal("staff", @random_enemy.equipped_weapon[:type], 
+      "When the random enemy's primary skill is magic, their equipped weapon should be type staff")
+
+    @enemy_factory.get_equipped_weapon("1-hand weapon")
+    assert_equal("1-hand weapon", @random_enemy.equipped_weapon[:type], 
+      "When the random enemy's primary skill is magic, their equipped weapon should be type 1-hand weapon")
+  end
 end
 

@@ -22,7 +22,7 @@ class RandomEnemyFactory
     use_points_to_assign(get_points_to_assign)
     set_proficiency_points(create_weighted_random_array(@primary_skill, @secondary_skill), calculate_number_proficiency_points)
     update_random_enemy
-    get_equipped_weapon
+    get_equipped_weapon(@primary_skill)
     @random_enemy.calculate_initial_stats
     return @random_enemy
   end
@@ -97,8 +97,8 @@ class RandomEnemyFactory
   end
 
   def get_skills
-    @primary_skill = get_random_skill
-    @secondary_skill = get_random_skill
+    @primary_skill = get_random_skill(get_random_number(1, 5))
+    @secondary_skill = get_random_skill(get_random_number(1, 5))
   end
 
   def calculate_number_proficiency_points
@@ -161,8 +161,7 @@ class RandomEnemyFactory
     end
   end
 
-  def get_random_skill
-    random_number = rand(1..5)
+  def get_random_skill(random_number)
     if random_number == 1
       #1-hand weapon
       return "1-hand weapon"
@@ -179,13 +178,13 @@ class RandomEnemyFactory
     end
   end
 
-  def get_equipped_weapon
+  def get_equipped_weapon(primary_skill)
     @random_enemy.item_list.each_pair do |key, value|
-      if value[:type] == @primary_skill
+      if value[:type] == primary_skill
         @random_enemy.equipped_weapon = value
         @random_enemy.add_item(key, value)
       elsif value[:type] == "staff"
-        if @primary_skill == "magic"
+        if primary_skill == "magic"
           @random_enemy.equipped_weapon = value
           @random_enemy.add_item(key, value)
         end
