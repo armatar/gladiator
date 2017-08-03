@@ -2,9 +2,14 @@ require "byebug"
 
 class RandomEnemyFactory
 
-  attr_reader :random_enemy
+  attr_reader :random_enemy, :str, :dex, :con, :mag, :cha
 
   def initialize
+  end
+
+  def get_points_to_assign
+    points_to_assign = (@random_enemy.level/4).floor + 20
+    return points_to_assign
   end
 
   def create_random_enemy(enemy, level)
@@ -13,8 +18,8 @@ class RandomEnemyFactory
     @random_enemy.set_level(level)
     get_random_character_base
     get_skills
-    get_stat_max
-    get_random_base_stats
+    get_stat_max(@primary_skill, @secondary_skill)
+    use_points_to_assign(get_points_to_assign)
     @random_enemy.set_base_attributes(@str, @dex, @con, @mag, @cha)
     calculate_number_proficiency_points
     set_proficiency_points
@@ -38,48 +43,53 @@ class RandomEnemyFactory
     @unarmed_prof = 0
   end
 
-  def get_points_to_assign
-    points_to_assign = (@random_enemy.level/4).floor + 20
-    return points_to_assign
+  def check_for_valid_random(max, attribute)
+    if ((attribute + 1) <= max)
+      return true
+    else
+      return false
+    end
   end
 
-  def get_random_base_stats
-    points_to_assign = get_points_to_assign
-    counter = 0
-    continue = false
-    while !continue
-      if counter >= points_to_assign
-        continue = true
-      else
-        random_number = rand(1..5)
-        case random_number
-        when 1
-          if ((@str + 1) <= @str_max)
-            @str += 1
-            counter += 1
-          end
-        when 2
-          if ((@dex + 1) <= @dex_max)
-            @dex += 1
-            counter += 1
-          end
-        when 3
-          if ((@con + 1) <= @con_max)
-            @con += 1
-            counter += 1
-          end
-        when 4
-          if ((@mag + 1) <= @mag_max)
-            @mag += 1
-            counter += 1
-          end
-        when 5
-          if ((@cha + 1) <= @cha_max)
-            @cha += 1
-            counter += 1
-          end
-        end  
+  def get_random_number(min, max)
+    random_number = rand(min..max)
+    return random_number
+  end
+
+  def update_random_attribute(random_number, points_to_assign)
+    case random_number
+    when 1
+      if check_for_valid_random(@str_max, @str)
+        @str += 1
+        return points_to_assign -= 1
       end
+    when 2
+      if check_for_valid_random(@dex_max, @dex)
+        @dex += 1
+        return points_to_assign -= 1
+      end
+    when 3
+      if check_for_valid_random(@con_max, @con)
+        @con += 1
+        return points_to_assign -= 1
+      end
+    when 4
+      if check_for_valid_random(@mag_max, @mag)
+        @mag += 1
+        return points_to_assign -= 1
+      end
+    when 5
+      if check_for_valid_random(@cha_max, @cha)
+        @cha += 1
+        return points_to_assign -= 1
+      end
+    end
+    return points_to_assign  
+  end
+
+  def use_points_to_assign(points_to_assign)
+    while points_to_assign > 0
+      points_to_assign = update_random_attribute((get_random_number(1, 5)), points_to_assign)
     end
   end
 
@@ -112,14 +122,14 @@ class RandomEnemyFactory
     end
   end
 
-  def get_stat_max
-    case @primary_skill
+  def get_stat_max(primary_skill, secondary_skill)
+    case primary_skill
     when "1-hand weapon", "dual wield weapon", "2-hand weapon", "unarmed weapon"
-      if @secondary_skill != "magic"
+      if secondary_skill != "magic"
         @str_max = 99
         @dex_max = 99
         @con_max = 99
-        @mag_max = 12
+        @mag_max = 9
         @cha_max = 12
       else
         @str_max = 99
@@ -129,7 +139,7 @@ class RandomEnemyFactory
         @cha_max = 99
       end
     when "magic"
-      if @secondary_skill == "magic"
+      if secondary_skill == "magic"
         @str_max = 12
         @dex_max = 12
         @con_max = 99
