@@ -33,4 +33,12 @@ class RandomEnemyTest < Minitest::Test
     assert_operator 12, :>=, @enemy_factory.mag,
     "Given that the enemy has 1-hand weapon as their primary and secondary proficiencies, their magic should never be more than 12"
   end
+
+  def test_set_proficiency_points
+    @enemy_factory.set_proficiency_points(["1-hand weapon"], 2)
+    @enemy_factory.update_random_enemy
+    assert_equal(2, @enemy_factory.random_enemy.one_hand_prof, 
+      "When the proficiency 1-hand weapon is selected twice, the one_hand_prof variable for the random enemy should be 2.")
+  end
 end
+

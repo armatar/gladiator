@@ -20,13 +20,16 @@ class RandomEnemyFactory
     get_skills
     get_stat_max(@primary_skill, @secondary_skill)
     use_points_to_assign(get_points_to_assign)
-    @random_enemy.set_base_attributes(@str, @dex, @con, @mag, @cha)
-    calculate_number_proficiency_points
-    set_proficiency_points
-    @random_enemy.set_base_proficiency_points(@one_hand_prof, @two_hand_prof, @dual_wield_prof, @magic_prof, @unarmed_prof)
+    set_proficiency_points(create_weighted_random_array(@primary_skill, @secondary_skill), calculate_number_proficiency_points)
+    update_random_enemy
     get_equipped_weapon
     @random_enemy.calculate_initial_stats
     return @random_enemy
+  end
+
+  def update_random_enemy
+    @random_enemy.set_base_attributes(@str, @dex, @con, @mag, @cha)
+    @random_enemy.set_base_proficiency_points(@one_hand_prof, @two_hand_prof, @dual_wield_prof, @magic_prof, @unarmed_prof)
   end
 
   def get_random_character_base
@@ -99,15 +102,18 @@ class RandomEnemyFactory
   end
 
   def calculate_number_proficiency_points
-    @proficiency_points = (@random_enemy.level/2).floor + 1
+    proficiency_points = (@random_enemy.level/2).floor + 1
+    return proficiency_points
   end
 
-  def set_proficiency_points
-    weighted_random_array = [@primary_skill, @primary_skill, @primary_skill, @secondary_skill]
+  def create_weighted_random_array(primary_skill, secondary_skill)
+    weighted_random_array = [primary_skill, primary_skill, primary_skill, secondary_skill]
+    return weighted_random_array
+  end
 
-    @proficiency_points.times do
-      weighted_random = weighted_random_array.sample
-      case weighted_random
+  def set_proficiency_points(weighted_random_array, proficiency_points)
+    proficiency_points.times do
+      case weighted_random_array.sample
       when "1-hand weapon"
         @one_hand_prof += 1
       when "dual wield weapon"
