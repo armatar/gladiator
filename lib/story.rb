@@ -35,11 +35,11 @@ class Story
         case @player_character.hook
         when 1
           new_game
-          @saves.autosave(@date, @player_character)
         when 2
-          first_battle
           @saves.autosave(@date, @player_character)
+          first_battle
         when 3
+          @saves.autosave(@date, @player_character)
           meeting_sponsor
         when 4
           new_day

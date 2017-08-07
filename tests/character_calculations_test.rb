@@ -5,7 +5,7 @@ class CharacterCalculationsTest < Minitest::Test
 
   def setup
     @test_character = CharacterForUnitTests.new("Test Character", "test")
-    @test_character.create_test_character
+    @test_character.create_character
   end
 
   def test_initial_hp_calculations

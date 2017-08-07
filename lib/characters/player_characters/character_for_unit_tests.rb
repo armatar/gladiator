@@ -1,12 +1,13 @@
 require_relative "../player_character.rb"
 
 class CharacterForUnitTests < PlayerCharacter
+    attr_writer :attack, :damage, :equipped_weapon, :ac
 
   def initialize(name, race)
     super(name, race)
   end
 
-  def create_test_character
+  def create_character
     @level = 3
     @str = 12 # affects sword/unarmed attack, cbm, cbm_def
     @dex = 18 # affects ac, cbm_def
@@ -31,10 +32,9 @@ class CharacterForUnitTests < PlayerCharacter
     add_spell_to_known_spells("shock weapon", @full_spell_list["shock weapon"])
     add_spell_to_known_spells("ray of sickening", @full_spell_list["ray of sickening"])
 
-    add_item("bronze sword", @items.item_list["bronze sword"])
-    add_item("bronze dual swords", @items.item_list["bronze dual swords"])
-    add_item("health potion", @items.item_list["health potion"])
-    add_item("bronze shield", @items.item_list["bronze shield"])
+    @items.item_list.each_pair do |key, value|
+        add_item(key, value)
+    end
 
     @equipped_weapon = @inventory["bronze sword"]
   end

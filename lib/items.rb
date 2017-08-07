@@ -11,7 +11,7 @@ class Items
   end
 
   def create_list_of_items
-    @default_weapon = {"fists" => { name: "fists", type: "unarmed weapon", dice: 4, number_of_dice: 1, crit: 20, crit_damage: 3, enchantment: 0 }}
+    @default_weapon = {"fists" => { name: "fists", type: "unarmed weapon", dice: 3, number_of_dice: 1, crit: 20, crit_damage: 3, enchantment: 0 }}
     @item_list = {
       "bronze sword" => { name: "bronze sword", type: "1-hand weapon", dice: 6, number_of_dice: 1, enchantment: 0, crit: 19, crit_damage: 2, price: 10 },
       "bronze greatsword" => { name: "bronze greatsword", type: "2-hand weapon", dice: 8, number_of_dice: 1, enchantment: 0, crit: 20, crit_damage: 3, price: 10 },

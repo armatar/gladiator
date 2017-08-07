@@ -120,7 +120,7 @@ module PlayerCombatOptions
       display_CBM(@maneuvers, @grappled)
       answer = ask_question("Which Combat Maneuver would you like to preform?", false, "Type 'back' to return.")
 
-    if answer == "back"
+      if answer == "back"
         @turn -= 1
         return true
       elsif !@maneuvers[answer]
@@ -142,7 +142,7 @@ module PlayerCombatOptions
   end
 
   def player_auto_attack
-    damage = attack_with_weapon(@ally, @enemy)
+    damage = loop_through_attacks(@ally, @enemy, get_number_of_attacks(@ally))
 
     if damage
       @enemy.hp -= damage

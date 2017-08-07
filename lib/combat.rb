@@ -12,15 +12,10 @@ class Combat
     #ally and enemy could be arrays in case of double battles
     @ally = ally
     @enemy = enemy
+    @message = ""
     create_status_effects_list
     create_list_of_maneuvers
-  end
-
-  def turn_based_combat
-
-    continue = false
     @turn = 1
-    @message = ""
     @enemy_previous_weapon = @enemy.equipped_weapon
     @ally_buff_counter = {}
     @enemy_buff_counter = {}
@@ -28,51 +23,71 @@ class Combat
     @enemy_curse_counter = {}
     @current_enemy_cbm = false
     @grappled = false
+  end
 
+  def turn_based_combat
+    continue = false
     while !continue
       system "clear"
 
-      display_activity_log
+      pre_turn_actions
+      result = turn_based_combat_segment_player
 
-      if @current_enemy_cbm && @current_enemy_cbm[:name] == "grapple"
-        result = enemy_is_grappled
-      else
-        display_combat_options(@ally)
-        display_combat_info(@ally, @enemy, @turn)
-        result = player_turn
-      end
       if result == "kill" || result == "spare"
+        #enemy has been killed -- breakout of combat
         clear_out_player_effects
         return result
       elsif !result
-        if @current_enemy_cbm
-          result = update_enemy_cbm
-        else
-          result = enemy_turn
-        end
+        #enemy is still alive and gets a turn
+        result = turn_based_combat_segment_enemy
         if result == "dead"
-          clear_out_player_effects
-          return result
-        elsif result == "kill" || result == "spare"
+          #enemy has killed player -- breakout of combat
           clear_out_player_effects
           return result
         end
       elsif result
+        #do nothing as player didn't take a full turn
       end
-      @turn += 1
-      restore_buff_status(@ally_buff_counter, @turn, "ally")
-      restore_buff_status(@enemy_buff_counter, @turn, "enemy")
-      restore_curse_status(@ally_curse_counter, @turn, "ally")
-      restore_curse_status(@enemy_curse_counter, @turn, "enemy")
+
+      post_turn_cleanup
     end
+  end
+
+  def pre_turn_actions
+    display_activity_log
+  end
+
+  def turn_based_combat_segment_player
+    if @current_enemy_cbm && @current_enemy_cbm[:name] == "grapple"
+      result = enemy_is_grappled
+    else
+      display_combat_options(@ally)
+      display_combat_info(@ally, @enemy, @turn)
+      result = player_turn
+    end
+    return result
+  end
+
+  def turn_based_combat_segment_enemy
+    if @current_enemy_cbm
+      result = update_enemy_cbm
+    else
+      result = enemy_turn
+    end
+  end
+
+  def post_turn_cleanup
+    @turn += 1
+    restore_buff_status(@ally_buff_counter, @turn, "ally")
+    restore_buff_status(@enemy_buff_counter, @turn, "enemy")
+    restore_curse_status(@ally_curse_counter, @turn, "ally")
+    restore_curse_status(@enemy_curse_counter, @turn, "enemy")
   end
 
   #will eventually go into enemyai
   def enemy_turn
-    damage = attack_with_weapon(@enemy, @ally)
-      if damage
-        @ally.hp -= damage
-      end
+    damage = loop_through_attacks(@enemy, @ally, get_number_of_attacks(@enemy))
+    @ally.hp -= damage
       
       if @ally.hp <= 0
         kill = true # may make it to where enemy can choose to spare you.
@@ -157,43 +172,48 @@ class Combat
     end
   end
 
-  def attack_with_weapon(attacker, target)
-    #roll!
-    damage = 0
+  def get_number_of_attacks(attacker)
     number_of_attacks = 1
-    @message += "#{attacker.name} attacks!\n"
-    if attacker.equipped_weapon[:type] == "dual wield weapon"
+    if attacker.equipped_weapon[:type] == "dual wield weapon" || attacker.equipped_weapon[:type] == "unarmed weapon"
       number_of_attacks = 2
     end
+    return number_of_attacks
+  end
+
+  def loop_through_attacks(attacker, target, number_of_attacks)
+    damage = 0
+    @message += "#{attacker.name} attacks!\n"
     number_of_attacks.times do
-      die_roll = rand(1..20)
-      # check for crit
-      if die_roll >= attacker.equipped_weapon[:crit]
-        # crit successful!
-        @message += "#{attacker.name} crits with a #{die_roll}!"
-        damage += roll_for_damage(attacker, true)
-      else
-        attack = die_roll + attacker.attack
-        if attack >= target.ac
-          @message += "Attack Roll: #{die_roll} + #{attacker.attack} = #{attack}, Target AC: #{target.ac}\n"
-          @message += "#{attacker.name} hits!\n"
-          damage += roll_for_damage(attacker, false)
-        else
-          @message += "Attack Roll: #{die_roll} + #{attacker.attack} = #{attack}, Target AC: #{target.ac}\n"
-          @message += "#{attacker.name} misses!\n\n"
-        end
+      hit = attack_with_weapon(attacker, target, roll_dice(1, 20, 1))
+      if hit
+        damage += get_damage(attacker, hit, 
+          roll_dice(1, attacker.equipped_weapon[:dice], attacker.equipped_weapon[:number_of_dice]))
       end
     end
     return damage
   end
 
-  def roll_for_damage(attacker, crit)
-    die_roll = 0
-    damage = 0
-    attacker.equipped_weapon[:number_of_dice].times do
-      die_roll += rand(1..attacker.equipped_weapon[:dice])
+  def attack_with_weapon(attacker, target, die_roll)
+    if die_roll >= attacker.equipped_weapon[:crit]
+      @message += "#{attacker.name} crits with a #{die_roll}!"
+      return "crit"
+    else
+      attack = die_roll + attacker.attack
+      if attack >= target.ac
+        @message += "Attack Roll: #{die_roll} + #{attacker.attack} = #{attack}, Target AC: #{target.ac}\n"
+        @message += "#{attacker.name} hits!\n"
+        return true
+      else
+        @message += "Attack Roll: #{die_roll} + #{attacker.attack} = #{attack}, Target AC: #{target.ac}\n"
+        @message += "#{attacker.name} misses!\n\n"
+        return false
+      end
     end
-    if crit
+  end
+
+  def get_damage(attacker, hit, die_roll)
+    damage = 0
+    if hit == "crit"
       damage = (die_roll + attacker.damage) * attacker.equipped_weapon[:crit_damage]
       if damage < 0
         damage = 0

@@ -6,7 +6,7 @@ module SpellEffects
 
   def check_if_spell_is_resisted(spell, caster, target)
     mag_dc = caster.get_magic_dc(spell[:level])
-    target_roll = roll_dice(20, 1)
+    target_roll = roll_dice(1, 20, 1)
     @message += "Resist Attempt: #{target_roll} + #{target.mag_resist} = #{target_roll + target.mag_resist}, Target: #{mag_dc}\n"
     target_roll += target.mag_resist
     if target_roll < mag_dc
@@ -35,16 +35,6 @@ module SpellEffects
     end
   end
 
-  def roll_dice(dice, number_of_dice)
-    random_number = 0
-
-    number_of_dice.times do
-      random_number += rand(1..dice)
-    end
-
-    return random_number
-  end
-
   def get_number_of_dice(spell, caster)
     number_of_dice = 0
     if spell[:number_of_dice_bonus]
@@ -68,7 +58,7 @@ module SpellEffects
 
     number_of_dice = get_number_of_dice(spell, caster)
 
-    damage = roll_dice(spell[:dice], number_of_dice)
+    damage = roll_dice(1, spell[:dice], number_of_dice)
 
     if spell[:damage_bonus]
       if spell[:damage_bonus] == "proficiency"
@@ -93,7 +83,7 @@ module SpellEffects
     #name: "cure light wounds", level: 1, type: "healing", dice: 8, number_of_dice: 1, healing_bonus: "proficiency", number_of_dice_bonus: false
 
     number_of_dice = get_number_of_dice(spell, caster)
-    healing = roll_dice(spell[:dice], number_of_dice)
+    healing = roll_dice(1, spell[:dice], number_of_dice)
 
     if spell[:healing_bonus]
       if spell[:healing_bonus] == "proficiency"

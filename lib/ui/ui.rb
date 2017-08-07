@@ -37,6 +37,15 @@ module UI
       puts Paint["press [enter] to continue..."]
       gets.chomp
     end
+
+    def roll_dice(min, max, number_of_dice)
+      dice_roll = 0
+      number_of_dice.times do
+        dice_roll += rand(min..max)
+      end
+      return dice_roll
+    end
+
   end
 
   module Interact
