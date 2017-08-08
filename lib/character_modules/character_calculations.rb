@@ -3,6 +3,7 @@ module CharacterCalculations
 
   def calculate_initial_stats
     update_modifiers
+    set_initiative
     set_first_hp(@level, get_hp_range(@con_modifier), @con_modifier)
     calculate_all_variable_stats
   end
@@ -174,6 +175,10 @@ module CharacterCalculations
     @con_modifier = (@con - 10) / 2
     @mag_modifier = (@mag - 10) / 2
     @cha_modifier = (@cha - 10) / 2
+  end
+
+  def set_initiative
+    @init = @dex_modifier
   end
 
   def get_magic_dc(spell_level)

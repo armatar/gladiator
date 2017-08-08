@@ -10,7 +10,7 @@ class Character
   include CharacterCalculations
 
   attr_accessor :hp, :mana, :equipped_weapon, :equipped_shield
-  attr_reader :max_hp, :max_mana, :str, :dex, :con, :mag, :cha
+  attr_reader :max_hp, :max_mana, :str, :dex, :con, :mag, :cha, :init
   attr_reader :name, :race, :level, :str_modifier, :dex_modifier, :con_modifier, :mag_modifier, :cha_modifier 
   attr_reader :ac, :mag_resist, :cbm, :cbm_def, :bab, :item_list
   attr_reader :items, :shield_bonus, :armor_bonus

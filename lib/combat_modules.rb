@@ -1,8 +1,5 @@
-require_relative "combat_modules/status_effects.rb"
-require_relative "combat_modules/combat_maneuvers.rb"
-require_relative "combat_modules/spell_effects.rb"
-require_relative "combat_modules/player_combat_options.rb"
-require_relative "combat_modules/player_combat_specific_interactions.rb"
+require "require_all"
+require_rel "combat_modules"
 
 module CombatModules
   include StatusEffects
@@ -10,4 +7,5 @@ module CombatModules
   include SpellEffects
   include PlayerCombatOptions
   include PlayerCombatSpecificInteractions
+  include GenericCombatInteractions
 end

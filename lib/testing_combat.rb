@@ -1,4 +1,4 @@
-require_relative "combat.rb"
+require_relative "combat_v2.rb"
 require_relative "factories/random_enemy_factory.rb"
 require_relative "characters/enemies.rb"
 require_relative "characters/player_characters/test_character.rb"
@@ -15,7 +15,7 @@ class TestingCombat
   end
 
   def fight
-    @fight = Combat.new(@player, @enemy_one)
+    @fight = Combat.new(@player, @enemy_one, "special event")
     @fight.turn_based_combat
   end
 end
