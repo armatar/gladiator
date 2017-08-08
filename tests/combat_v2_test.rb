@@ -25,32 +25,29 @@ class CombatV2Test < Minitest::Test
       "When the player's initiative is lower than the enemy's, function should return false.")
   end
 
-  def test_turn_based_combat
+  def test_combat_phase
     @mock.expect :call, nil, [true]
-    @mock.expect :call, nil, [false]
-    @combat_session.stub(:combat_phase, @mock) do
-      @combat_session.turn_based_combat(true)
+    @combat_session.stub(:initiate_correct_turn, @mock) do
+      @combat_session.combat_phase(true)
     end
 
     @mock.expect :call, false, [@player_character.hp, @enemy.hp]
-    @mock.expect :call, false, [@player_character.hp, @enemy.hp]
     @combat_session.stub(:check_for_death, @mock) do
-      @combat_session.turn_based_combat(true)
+      @combat_session.combat_phase(true)
     end
 
     assert(@mock.verify)
   end
 
-  def test_combat_phase
+  def test_initiate_correct_turn
     @mock.expect :call, nil
     @combat_session.stub(:player_phase, @mock) do
-      @combat_session.combat_phase(true)
+      @combat_session.initiate_correct_turn(true)
     end
-    assert(@mock.verify)
 
     @mock.expect :call, nil
     @combat_session.stub(:enemy_phase, @mock) do
-      @combat_session.combat_phase(false)
+      @combat_session.initiate_correct_turn(false)
     end
     assert(@mock.verify)
   end

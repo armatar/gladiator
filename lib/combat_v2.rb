@@ -10,28 +10,45 @@ class Combat
     @enemy = enemy
     @special_events = special_events
     @message = ""
+    @turn = 1
   end
 
   def start_combat
     player_turn = player_goes_first?(@player_character.init, @enemy.init)
-    combat_result = turn_based_combat(player_turn)
-    return combat_result
+    combat_loop(player_turn)
   end
 
   def turn_based_combat(player_turn)
-    combat_phase(player_turn)
-    result = check_for_death(@player_character.hp, @enemy.hp) 
-    if result
-      return result
+    combat_result = combat_phase(player_turn)
+    if combat_result
+      return combat_result
     end
+
     player_turn ^= true
 
-    combat_phase(player_turn)
-    result = check_for_death(@player_character.hp, @enemy.hp) 
-    if result
-      return result
+    combat_result = combat_phase(player_turn)
+    if combat_result
+      return combat_result
     end
+
     player_turn ^= true
+    return false
+  end
+
+  def combat_loop(player_turn)
+    loop do
+      result = turn_based_combat(player_turn)
+      if result
+        return result
+      end
+      @turn += 1
+    end
+  end
+
+  def combat_phase(player_turn)
+    initiate_correct_turn(player_turn)
+    result = check_for_death(@player_character.hp, @enemy.hp) 
+    return result
   end
 
   def player_goes_first?(player_init, enemy_init)
@@ -42,7 +59,7 @@ class Combat
     end
   end
 
-  def combat_phase(player_turn)
+  def initiate_correct_turn(player_turn)
     player_turn ? player_phase : enemy_phase
   end
 
