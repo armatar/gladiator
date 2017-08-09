@@ -14,9 +14,9 @@ class Items
     @default_weapon = {"fists" => { name: "fists", type: "unarmed weapon", dice: 3, 
       number_of_dice: 1, number_of_attacks: 2, crit: 20, crit_damage: 3, enchantment: 0 }}
     @item_list = {}
-    @item_list.push(reate_list_of_weapons)
-    @item_list.push(healing_items)
-    @item_list.push(armor_and_shields)
+    @item_list.merge!(create_list_of_weapons)
+    @item_list.merge!(create_list_healing_items)
+    @item_list.merge!(create_list_armor_and_shields)
   end
 
   def create_list_of_weapons
