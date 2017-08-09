@@ -1,11 +1,13 @@
 require_relative '../user_interface.rb'
 
-module CombatMethods
+module AutoAttack
   include UserInterface
 
   def attack_with_equipped_weapon(attacker, target)
     number_of_attacks = attacker.equipped_weapon[:number_of_attacks]
-    return loop_through_attacks(attacker, target, number_of_attacks)
+    damage =  loop_through_attacks(attacker, target, number_of_attacks)
+
+    return damage
   end
 
   def loop_through_attacks(attacker, target, number_of_attacks)
@@ -15,7 +17,7 @@ module CombatMethods
       hit = attempt_to_hit(attacker, target)
       damage += get_damage(attacker, hit)
     end
-    
+
     return damage
   end
 
@@ -30,8 +32,13 @@ module CombatMethods
 
   def get_damage(attacker, hit)
     if hit
-      damage_roll = roll_damage(attacker.equipped_weapon[:dice], attacker.equipped_weapon[:number_of_dice])
-      return calculate_real_damage(attacker.damage, damage_roll)
+      dice_to_roll = attacker.equipped_weapon[:dice]
+      number_of_dice = attacker.equipped_weapon[:number_of_dice]
+
+      damage_roll = roll_damage(dice_to_roll, number_of_dice)
+      damage = calculate_real_damage(attacker.damage, damage_roll)
+
+      return damage
     else
       return 0
     end
