@@ -1,8 +1,8 @@
-require_relative 'combat_modules.rb'
+require_relative 'combat_v2_modules.rb'
 require_relative 'user_interface.rb'
 
 class Combat
-  include CombatModules
+  include CombatV2Modules
   include UserInterface
 
   attr_reader :player_character, :enemy, :turn
