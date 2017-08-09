@@ -20,6 +20,14 @@ class CombatMethodsV2 < Minitest::Test
     possible_damage = [3, 4, 5, 6, 7, 8]
 
   	assert_includes(possible_damage, @combat_session.attack_with_equipped_weapon(@player_character, @enemy))
+
+    @player_character.equipped_weapon = @player_character.inventory["bronze dual swords"]
+    @mock.expect :call, 5, [@player_character, true]
+    @mock.expect :call, 5, [@player_character, true]
+    @combat_session.stub(:get_damage, @mock) do
+      @combat_session.attack_with_equipped_weapon(@player_character, @enemy)
+    end
+    assert(@mock.verify)
   end
 
   def test_attempt_to_hit

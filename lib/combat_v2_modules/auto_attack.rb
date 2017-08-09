@@ -4,18 +4,11 @@ module AutoAttack
   include UserInterface
 
   def attack_with_equipped_weapon(attacker, target)
-    number_of_attacks = attacker.equipped_weapon[:number_of_attacks]
-    damage =  loop_through_attacks(attacker, target, number_of_attacks)
-
-    return damage
-  end
-
-  def loop_through_attacks(attacker, target, number_of_attacks)
     damage = 0
+    number_of_attacks = attacker.equipped_weapon[:number_of_attacks]
 
     number_of_attacks.times do
-      hit = attempt_to_hit(attacker, target)
-      damage += get_damage(attacker, hit)
+      damage +=  get_damage(attacker, attempt_to_hit(attacker, target))
     end
 
     return damage
