@@ -16,7 +16,7 @@ class TestingCombat
 
   def fight
     @fight = Combat.new(@player, @enemy_one, "special event")
-    @fight.turn_based_combat
+    @fight.fight!
   end
 end
 

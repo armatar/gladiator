@@ -13,6 +13,26 @@ class CombatV2Test < Minitest::Test
     @combat_session = Combat.new(@player_character, @enemy, "special event")
   end
 
+  def capture_stdout(&block)
+    original_stdout = $stdout
+    $stdout = fake = StringIO.new
+    begin
+      yield
+    ensure
+      $stdout = original_stdout
+    end
+    fake.string
+  end
+
+  def with_stdin
+    stdin = $stdin             # remember $stdin
+    $stdin, write = IO.pipe    # create pipe assigning its "read end" to $stdin
+    yield write                # pass pipe's "write end" to block
+  ensure
+    write.close                # close pipe
+    $stdin = stdin             # restore $stdin
+  end
+
   def test_fight
     player_turn = true
     @mock.expect :call, "player", [player_turn] 
@@ -23,56 +43,55 @@ class CombatV2Test < Minitest::Test
   end
 
   def test_start_combat
-    player_turn = true
-    @combat_session.player_character.hp = 0
-
-    @mock.expect :call, true, [true]
-    @combat_session.stub(:combat_loop, @mock) do
-      @combat_session.start_combat(player_turn)
+    player_turn = false
+    hps_to_test = {"enemy" =>[10, 0], "player" =>[0, 10], "both" =>[0, 0]}
+    hps_to_test.each_pair do |answer, hps|
+      @combat_session.player_character.hp = hps[0]
+      @combat_session.enemy.hp = hps[1]
+      assert_equal(answer, @combat_session.start_combat(player_turn = false),
+        "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return '#{answer}'.")
     end
 
-    @mock.expect :call, true, [@combat_session.player_character.hp, @combat_session.enemy.hp]
-    @combat_session.stub(:who_is_dead, @mock) do
-      @combat_session.start_combat(player_turn)
-    end
-
-    assert(@mock.verify)
   end
 
   def test_combat_loop
     @combat_session.enemy.hp = 0
-    player_turn = true
+    player_turn = false
     @combat_session.combat_loop(player_turn)
     assert_equal(1, @combat_session.turn, 
       "When the enemy's hp starts at 0, the loop should only run once.")
   end
 
   def test_turn_based_combat
-    @combat_session.enemy.hp = 10
-    @combat_session.player_character.hp = 10
-    @mock.expect :call, false, [true]
-    @mock.expect :call, false, [false]
-    @combat_session.stub(:combat_phase, @mock) do
-      @combat_session.turn_based_combat(true)
+    player_turn = false
+
+    with_stdin do |user|
+      user.puts "1"
+      @combat_session.enemy.hp = 100
+      @combat_session.player_character.hp = 100
+      @mock.expect :call, false, [false]
+      @mock.expect :call, false, [true]
+      @combat_session.stub(:combat_phase, @mock) do
+        @combat_session.turn_based_combat(player_turn)
+      end
     end
     assert(@mock.verify)
 
     @combat_session.enemy.hp = 0
-    assert(@combat_session.turn_based_combat(true), 
+    assert(@combat_session.turn_based_combat(player_turn), 
       "When the enemy has 0 HP, the function turn_based_combat should return true.")
   end
 
   def test_combat_phase
-    @mock.expect :call, nil, [true]
+    @mock.expect :call, nil, [false]
     @combat_session.stub(:initiate_correct_turn, @mock) do
-      @combat_session.combat_phase(true)
+      @combat_session.combat_phase(false)
     end
 
     @mock.expect :call, false, [@player_character.hp, @enemy.hp]
     @combat_session.stub(:check_for_death, @mock) do
-      @combat_session.combat_phase(true)
+      @combat_session.combat_phase(false)
     end
-
     assert(@mock.verify)
   end
 

@@ -8,6 +8,7 @@ module AutoAttack
     number_of_attacks = attacker.equipped_weapon[:number_of_attacks]
 
     number_of_attacks.times do
+      @message += "#{attacker.name} attacks with their #{attacker.equipped_weapon[:name]}!\n"
       damage +=  get_damage(attacker, attempt_to_hit(attacker, target))
     end
 
@@ -16,9 +17,12 @@ module AutoAttack
 
   def attempt_to_hit(attacker, target, die_roll=roll_dice(1,20,1))
     attack = attacker.attack + die_roll
+    @message += "Attack: #{attacker.attack} + #{die_roll} = #{attack}, Target: #{target.ac}\n"
     if attack >= target.ac
+      @message += "#{attacker.name} hits!\n"
       return true
     else
+      @message += "#{attacker.name} misses!\n"
       return false
     end
   end
@@ -43,6 +47,7 @@ module AutoAttack
 
   def calculate_real_damage(damage_bonus, damage_roll)
     damage = damage_roll + damage_bonus
+    @message += "Damage: #{damage_roll} + #{damage_bonus} = #{damage}\n\n"
     return damage
   end
 end

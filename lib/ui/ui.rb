@@ -209,20 +209,20 @@ module UI
   module CombatDisplay
     include DisplayShortcuts
 
-    def display_combat_options(ally)
+    def display_combat_options(player_character)
       print_line
       print_title('F I G H T')
       print_line
-      puts "1. [ swing your #{ally.equipped_weapon[:name]} ] ".ljust(35) + "2. [ use a skill ]" 
+      puts "1. [ swing your #{player_character.equipped_weapon[:name]} ] ".ljust(35) + "2. [ use a skill ]" 
       puts "3. [ cast a spell ] ".ljust(35) + "4. [ perform a combat maneuver ]"
       puts "5. [ use an item ] ".ljust(35) + "6. [ equip a weapon ]"
       print_line
     end
 
-    def display_combat_info(ally, enemy, turn)
+    def display_combat_info(player_character, enemy, turn)
       puts "Turn: " + Paint["#{turn}", :white]
-      puts "#{@ally.name.capitalize}'s HP: " + Paint["#{ally.hp}/#{ally.max_hp}".ljust(25), :white] + 
-           "#{@ally.name.capitalize}'s Mana: " + Paint["#{ally.mana}/#{ally.max_mana}", :white]
+      puts "#{player_character.name.capitalize}'s HP: " + Paint["#{player_character.hp}/#{player_character.max_hp}".ljust(25), :white] + 
+           "#{player_character.name.capitalize}'s Mana: " + Paint["#{player_character.mana}/#{player_character.max_mana}", :white]
       puts "#{@enemy.name.capitalize}'s HP: " + Paint["#{enemy.hp}/#{enemy.max_hp}".ljust(25), :white] + 
            "#{@enemy.name.capitalize}'s Mana: " + Paint["#{enemy.mana}/#{enemy.max_mana}", :white]
       print_line
@@ -240,12 +240,12 @@ module UI
       print_line
     end
 
-    def display_activity_log
+    def display_activity_log(message)
       print_line
       print_basic_message("Activity Log")
       print_line
-      print_basic_message (@message)
-      @message = ""
+      print_basic_message (message)
+      message = ""
     end
   end
 

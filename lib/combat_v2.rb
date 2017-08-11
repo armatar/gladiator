@@ -44,11 +44,7 @@ class Combat
     end
 
     combat_result = combat_phase(!player_turn)
-    if combat_result
-      return combat_result
-    end
-
-    return false
+    return combat_result
   end
 
 
@@ -71,6 +67,10 @@ class Combat
   end
 
   def player_phase
+    continue = false
+    while !continue
+      continue = player_turn
+    end
   end
 
   def enemy_phase

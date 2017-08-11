@@ -3,4 +3,5 @@ require_rel "combat_v2_modules"
 
 module CombatV2Modules
   include AutoAttack
+  include PlayerTurn
 end
