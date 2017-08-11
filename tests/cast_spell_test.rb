@@ -13,28 +13,69 @@ class CastSpellTest < Minitest::Test
     @combat_session = Combat.new(@player_character, @enemy, "special event")
   end
 
-  def test_determine_if_user_has_spell
+  def test_get_spell_if_exist
     spell_name = "magic missle"
-    assert(@combat_session.determine_if_user_has_spell(spell_name), 
-      "Player has '#{spell_name}'' in their list of known spells so the function should return true.")
+    retrieved_spell = @combat_session.get_spell_if_exist(spell_name)
+    assert_equal(spell_name, retrieved_spell[:name], 
+      "Player has '#{spell_name}'' in their list of known spells so the function should return true")
 
     spell_name = "spell that doesn't exist"
-    assert(!@combat_session.determine_if_user_has_spell(spell_name), 
-      "'#{spell_name}' does not exist in player's known spells so the function should turn false.")
+    assert(!@combat_session.get_spell_if_exist(spell_name), 
+      "'#{spell_name}' does not exist in player's known spells so the function should turn false")
   end
 
-  def test_determine_type_of_spell
+  def test_check_if_overcome_spell_failure
+    spell_failure_chance = 100
+    assert(!@combat_session.check_if_overcome_spell_failure(spell_failure_chance),
+      "When spell failure chance is 100%, the spell will fail and the function should return false")
+
+    spell_failure_chance = 0
+    assert(@combat_session.check_if_overcome_spell_failure(spell_failure_chance),
+      "When spell failure chance is 0%, the spell should succeed and the function should return true")
+  end
+
+  def test_check_if_spell_is_resisted
+    spell_dc = 21
+    target_magic_resist =22
+    message = "When the target's base magic resist is higher than the spell_dc, they should resist " +
+    "the spell and the function should return true."
+    assert(@combat_session.check_if_spell_is_resisted(spell_dc, target_magic_resist), message)
+  
+    target_magic_resist = 0
+    message = "When the target's base magic resist is 0 and the spell dc is 21, they should never " +
+    "resist the spell and the function should return false."
+    assert(!@combat_session.check_if_spell_is_resisted(spell_dc, target_magic_resist), message)
+  end
+
+  def test_get_max_healing
+    healing = 10
+    hp = 5
+    max_hp = 10
+
+    assert_equal(5, @combat_session.get_max_healing(healing, hp, max_hp),
+      "When a caster is being healed by 10 but their hp is 5 and their max hp is 10, then the function should return 5.")
+    max_hp = 20
+
+    assert_equal(10, @combat_session.get_max_healing(healing, hp, max_hp),
+      "When a caster is being healed by 10 but their hp is 5 and their max hp is 20, then the function should return 10.")
+  end
+
+  def test_cast_spell_by_type
     spell = @combat_session.player_character.known_spells["magic missle"]
-    @mock.expect :call, nil, [spell]
+    caster = "caster"
+    @mock.expect :call, nil, [spell, caster]
     @combat_session.stub(:cast_damage_spell, @mock) do
-      @combat_session.determine_type_of_spell(spell)
+      @combat_session.cast_spell_by_type(spell, caster)
     end
 
     spell = @combat_session.player_character.known_spells["cure light wounds"]
-    @mock.expect :call, nil, [spell]
+    @mock.expect :call, nil, [spell, caster]
     @combat_session.stub(:cast_healing_spell, @mock) do
-      @combat_session.determine_type_of_spell(spell)
+      @combat_session.cast_spell_by_type(spell, caster)
     end
   end
+
+
+
 
 end
