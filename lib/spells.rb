@@ -23,10 +23,10 @@ class Spells
   def create_damage_spells
     @damage_spells = {
         "burning hands" => {name: "burning hands", level: 1, type: "damage", dice: 4, number_of_dice: 1, damage_bonus: false, 
-           number_of_dice_bonus: "proficiency", mana_cost: 10, price: 100,
+           number_of_dice_bonus: "proficiency", bonus_missles: false, mana_cost: 10, price: 100,
            description: "You touch your opponent with hands of flame. \nDeals 1d6 damage per magic proficiency point."},
       "magic missle" => {name: "magic missle", level: 1, type: "damage", dice: 4, number_of_dice: 1, damage_bonus: "magic", 
-           number_of_dice_bonus: "level", mana_cost: 15, price: 150,
+           number_of_dice_bonus: "level", bonus_missles: "proficiency", mana_cost: 15, price: 150,
            description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."} 
     }
   end

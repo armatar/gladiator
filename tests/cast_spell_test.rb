@@ -47,19 +47,6 @@ class CastSpellTest < Minitest::Test
     assert(!@combat_session.check_if_spell_is_resisted(spell_dc, target_magic_resist), message)
   end
 
-  def test_get_max_healing
-    healing = 10
-    hp = 5
-    max_hp = 10
-
-    assert_equal(5, @combat_session.get_max_healing(healing, hp, max_hp),
-      "When a caster is being healed by 10 but their hp is 5 and their max hp is 10, then the function should return 5.")
-    max_hp = 20
-
-    assert_equal(10, @combat_session.get_max_healing(healing, hp, max_hp),
-      "When a caster is being healed by 10 but their hp is 5 and their max hp is 20, then the function should return 10.")
-  end
-
   def test_cast_spell_by_type
     spell = @combat_session.player_character.known_spells["magic missle"]
     caster = "caster"
@@ -74,8 +61,4 @@ class CastSpellTest < Minitest::Test
       @combat_session.cast_spell_by_type(spell, caster)
     end
   end
-
-
-
-
 end

@@ -5,4 +5,6 @@ module CombatV2Modules
   include AutoAttack
   include PlayerTurn
   include CastSpell
+  include CastDamageSpell
+  include CastHealingSpell
 end
