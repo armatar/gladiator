@@ -39,3 +39,4 @@ module CastSpell
       cast_healing_spell(spell, caster)
     end
   end
+end
