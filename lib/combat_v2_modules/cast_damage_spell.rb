@@ -11,12 +11,14 @@ module CastDamageSpell
 
   def get_base_spell_damage(spell, bonus)
     number_of_dice = spell[:number_of_dice] + bonus
+    @message += "Damage: #{number_of_dice}d#{spell[:dice]}"
     damage = roll_dice(1, spell[:dice], number_of_dice)
     return damage
   end
 
   def get_full_spell_damage(base_damage, bonus_damage)
     damage = base_damage + bonus_damage
+    @message += " + #{bonus_damage} = #{damage}. \n"
     return damage
   end
 

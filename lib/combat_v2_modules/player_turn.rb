@@ -27,9 +27,7 @@ module PlayerTurn
       return false
     elsif answer == "cast a spell" || answer == "3"
       # cast a spell
-      #return player_cast_spell
-      @message += "Currently disabled."
-      return false
+      return player_get_spell
     elsif answer == "perform a combat maneuver" || answer == "4"
       # do cbm
       #return player_do_cbm
@@ -72,67 +70,58 @@ module PlayerTurn
     end
   end
 
-  def player_cast_spell
-    valid_answer = false
-      while !valid_answer
-        display_spell_list(@ally.known_spells)
-        answer = ask_question("What spell do you wish to cast?", false, "Type 'back' to leave without casting a spell.")
-        if answer == "back"
-          system "clear"
-          valid_answer = true
-          @turn -= 1
-          return true
-        elsif @ally.known_spells[answer] && @ally.known_spells[answer][:mana_cost] > @ally.mana
-          system "clear"
-          print_line
-          print_error_message("You don't have enough mana to cast #{answer}!")
-        elsif @ally.known_spells[answer]
-          spell = @ally.known_spells[answer]
-          @ally.mana -= spell[:mana_cost]
-          if check_if_overcome_spell_failure(@ally)
-          system "clear"
-            case spell[:type]
-            when "damage"
-              resisted = check_if_spell_is_resisted(spell, @ally, @enemy)
-              if resisted
-                @message += "#{@enemy.name} resisted the attack!\n\n"
-                return false
-              else
-                @message += "The spell hits!\n"
-                damage = cast_damage_spell(spell, @ally, @enemy)
-                @enemy.hp -= damage
-                return check_if_dead
-              end
-            when "healing"
-              healing = cast_healing_spell(spell, @ally, @enemy)
-              @message += "You heal for #{healing} health\n\n"
-              @ally.hp += healing
-              return false
-            when "buff"
-              time = cast_buff_spell(spell, "ally")
-              time += @turn + 1
-              @ally_buff_counter[time] = spell
-              return false
-            when "curse"
-              resisted = check_if_spell_is_resisted(spell, @ally, @enemy)
-              if resisted
-                @message += "#{@enemy.name} resisted the curse!\n\n"
-              else
-                time = cast_curse_spell(spell, "enemy")
-                time += @turn + 1
-                @enemy_curse_counter[time] = spell
-              end
-              return false
-            end
-          else
-            return false
-          end
-        else
-          system "clear"
-          print_line
-          print_error_message("You don't have the spell #{answer}.")
-        end
-      end
+  def player_get_spell
+    display_spell_list(@player_character.known_spells)
+    spell_name = ask_question("Which spell would you like to cast?")
+    spell = get_spell_if_exist(spell_name)
+    if !spell
+      return false
+    else
+      return player_account_for_mana(spell)
+    end
+  end
+
+  def player_account_for_mana(spell)
+    if has_enough_mana?(@player_character.mana, spell)
+      @player_character.mana -= spell[:mana_cost]
+      player_cast_spell(spell)
+      return true
+    else
+      return false
+    end
+  end
+
+  def player_cast_spell(spell)
+    if check_if_overcome_spell_failure(@player_character.spell_failure_chance)
+      @message += "#{@player_character.name} casts #{spell[:name]}!\n"
+      player_coordinate_cast(spell)
+    end
+  end
+
+  def player_coordinate_cast(spell)
+    if spell[:type] == "damage"
+      player_cast_damage_spell(spell)
+    elsif spell[:type] == "healing"
+      player_cast_healing_spell(spell)
+    end
+  end
+
+  def player_cast_damage_spell(spell)
+    if !check_if_spell_is_resisted(@player_character.get_magic_dc(spell[:level]), @enemy.mag_resist)
+      damage = cast_damage_spell(spell, @player_character)
+      @enemy.hp -= damage
+    end
+  end
+
+  def player_cast_healing_spell(spell)
+    healing = cast_healing_spell(spell, caster)
+    @player_character.hp += healing
+  end
+
+  def player_cast_buff_spell(spell)
+  end
+
+  def player_cast_curse_spell(spell)
   end
 
   def player_do_cbm

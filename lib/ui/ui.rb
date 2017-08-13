@@ -51,7 +51,7 @@ module UI
   module Interact
     include DisplayShortcuts
 
-    def ask_question(question, options, tip)
+    def ask_question(question, options=false, tip=false)
       puts Paint[question]
       print_line
       if options != false

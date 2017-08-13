@@ -1,7 +1,7 @@
 require_relative "../enemies.rb"
 
 class EnemyForUnitTests < Enemies
-  attr_writer :attack, :damage, :equipped_weapon, :ac, :hp
+  attr_writer :attack, :damage, :equipped_weapon, :ac, :hp, :mag_resist
 
   def initialize
     super("Tester", "Human")

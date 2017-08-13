@@ -47,21 +47,6 @@ class CastSpellTest < Minitest::Test
     assert(!@combat_session.check_if_spell_is_resisted(spell_dc, target_magic_resist), message)
   end
 
-  def test_cast_spell_by_type
-    spell = @combat_session.player_character.known_spells["magic missle"]
-    caster = "caster"
-    @mock.expect :call, nil, [spell, caster]
-    @combat_session.stub(:cast_damage_spell, @mock) do
-      @combat_session.cast_spell_by_type(spell, caster)
-    end
-
-    spell = @combat_session.player_character.known_spells["cure light wounds"]
-    @mock.expect :call, nil, [spell, caster]
-    @combat_session.stub(:cast_healing_spell, @mock) do
-      @combat_session.cast_spell_by_type(spell, caster)
-    end
-  end
-
   def test_get_bonus
     bonus = "proficiency"
     @player_character.magic_prof = 5

@@ -3,10 +3,10 @@ require_relative '../user_interface.rb'
 module CastSpell
   include UserInterface
 
-  def get_spell_if_exist(spell)
-    spell = player_character.known_spells[spell]
+  def get_spell_if_exist(spell_name)
+    spell = player_character.known_spells[spell_name]
     if !spell
-      @message += "You do not have the spell: #{spell}.\n"
+      @message += "You do not have the spell: #{spell_name}.\n"
     end
     return spell
   end
@@ -15,7 +15,7 @@ module CastSpell
     if percent_roll > spell_failure_chance
       return true
     else
-      @message += "Spell Fail Chance(#{spell_failure_chance}%): Your spell fizzles and dies...\n\n"
+      @message += "Spell Fail Chance(#{spell_failure_chance}%): The spell fizzles and dies...\n\n"
       return false
     end
   end
@@ -32,11 +32,12 @@ module CastSpell
     end
   end
 
-  def cast_spell_by_type(spell, caster)
-    if spell[:type] == "damage"
-      return cast_damage_spell(spell, caster)
-    elsif spell[:type] == "healing"
-      cast_healing_spell(spell, caster)
+  def has_enough_mana?(mana, spell)
+    if mana >= spell[:mana_cost]
+      return true
+    else
+      @message += "Not enough mana to cast #{spell[:name]}!\n"
+      return false
     end
   end
 
