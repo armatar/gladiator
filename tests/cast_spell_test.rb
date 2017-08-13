@@ -61,4 +61,12 @@ class CastSpellTest < Minitest::Test
       @combat_session.cast_spell_by_type(spell, caster)
     end
   end
+
+  def test_get_bonus
+    bonus = "proficiency"
+    @player_character.magic_prof = 5
+
+    assert_equal(5, @combat_session.get_bonus(bonus, @player_character),
+      "Function should return the character's magic proficiency when the dice bonus is proficiency.")
+  end
 end

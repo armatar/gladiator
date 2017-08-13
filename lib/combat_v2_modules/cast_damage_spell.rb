@@ -9,18 +9,6 @@ module CastDamageSpell
     return damage
   end
 
-  def get_bonus(bonus_to_get, caster)
-    if bonus_to_get == "proficiency"
-      return caster.magic_prof
-    elsif bonus_to_get == "level"
-      return caster.level
-    elsif bonus_to_get == "magic"
-      return caster.mag_modifier
-    elsif bonus_to_get == false
-      return 0
-    end
-  end
-
   def get_base_spell_damage(spell, bonus)
     number_of_dice = spell[:number_of_dice] + bonus
     damage = roll_dice(1, spell[:dice], number_of_dice)

@@ -33,7 +33,7 @@ class Spells
 
   def create_healing_spells
     @healing_spells = {
-      "cure light wounds" => {name: "cure light wounds", level: 1, type: "healing", dice: 8, number_of_dice: 1, 
+      "cure light wounds" => {name: "cure light wounds", level: 1, type: "healing", attribute: "hp", dice: 8, number_of_dice: 1, 
            healing_bonus: "proficiency", number_of_dice_bonus: false, mana_cost: 20, price: 200,
            description: "You use your magic to mend some of your cuts and bruises. \nHeals 1d8 + magic proficiency point per level."}
     }

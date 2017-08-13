@@ -3,7 +3,7 @@ require_relative '../lib/combat_v2.rb'
 require_relative '../lib/characters/player_characters/character_for_unit_tests.rb'
 require_relative '../lib/characters/enemies/enemy_for_unit_tests.rb'
 
-class CastSpellTest < Minitest::Test
+class CastDamageSpellTest < Minitest::Test
   def setup
     @mock = MiniTest::Mock.new
     @player_character = CharacterForUnitTests.new("test", "human")
@@ -20,14 +20,6 @@ class CastSpellTest < Minitest::Test
 
     assert_includes(valid_damage, @combat_session.get_base_spell_damage(spell, bonus),
       "Damage should be a result of 2d6. (2-12)")
-  end
-
-  def test_get_bonus
-    bonus = "proficiency"
-    @player_character.magic_prof = 5
-
-    assert_equal(5, @combat_session.get_bonus(bonus, @player_character),
-      "Function should return the character's magic proficiency when the dice bonus is proficiency.")
   end
 
   def test_get_full_spell_damage

@@ -3,7 +3,7 @@ require_relative '../lib/combat_v2.rb'
 require_relative '../lib/characters/player_characters/character_for_unit_tests.rb'
 require_relative '../lib/characters/enemies/enemy_for_unit_tests.rb'
 
-class CastSpellTest < Minitest::Test
+class CastHealingSpellTest < Minitest::Test
   def setup
     @mock = MiniTest::Mock.new
     @player_character = CharacterForUnitTests.new("test", "human")

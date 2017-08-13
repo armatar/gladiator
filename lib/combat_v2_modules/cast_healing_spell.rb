@@ -12,4 +12,5 @@ module CastHealingSpell
     end
     return healing
   end
+
 end
