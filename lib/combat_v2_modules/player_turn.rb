@@ -72,18 +72,39 @@ module PlayerTurn
 
   def player_get_spell
     display_spell_list(@player_character.known_spells)
-    spell_name = ask_question("Which spell would you like to cast?")
+    spell_name = ask_question("Which spell would you like to cast?", false, "Type 'back' to return to the menu.")
+
+    if spell_name == "back"
+      return false
+    end
+
     spell = get_spell_if_exist(spell_name)
     if !spell
       return false
     else
-      return player_account_for_mana(spell)
+      return spell_pre_checks(spell)
     end
   end
 
-  def player_account_for_mana(spell)
-    if has_enough_mana?(@player_character.mana, spell)
-      @player_character.mana -= spell[:mana_cost]
+  def spell_pre_checks(spell)
+    if spell[:type] == "healing"
+      if !check_if_fully_healed(@player_character, spell[:attribute])
+        return player_account_for_cost(spell)
+      else
+        return false
+      end
+    else
+      return player_account_for_cost(spell)
+    end
+  end
+
+  def player_account_for_cost(spell)
+    if has_enough_to_cast?(@player_character, spell)
+      if spell[:cost_pool] == "mana"
+        @player_character.mana -= spell[:casting_cost]
+      elsif spell[:cost_pool] == "hp"
+        @player_character.hp -= spell[:casting_cost]
+      end
       player_cast_spell(spell)
       return true
     else
@@ -114,7 +135,7 @@ module PlayerTurn
   end
 
   def player_cast_healing_spell(spell)
-    healing = cast_healing_spell(spell, caster)
+    healing = cast_healing_spell(spell, @player_character)
     @player_character.hp += healing
   end
 

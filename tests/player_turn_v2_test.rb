@@ -60,8 +60,8 @@ class PlayerTurnV2Test < Minitest::Test
 
   def test_player_get_spell
     spell = {name: "magic missle", level: 1, type: "damage", dice: 4, number_of_dice: 1, damage_bonus: "magic", 
-           number_of_dice_bonus: "level", bonus_missles: "proficiency", mana_cost: 15, price: 150,
-           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."}
+           number_of_dice_bonus: "level", bonus_missles: "proficiency", casting_cost: 15, cost_pool: "mana", price: 150,
+           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."} 
 
     with_stdin do |user|
       user.puts "magic missle"
@@ -73,23 +73,23 @@ class PlayerTurnV2Test < Minitest::Test
     assert(@mock.verify)
   end
 
-  def test_player_account_for_mana
-    spell = {name: "spell with too high a mana cost", mana_cost: 20}
+  def test_player_account_for_cost
+    spell = {name: "spell with too high a mana cost", casting_cost: 20, cost_pool: "mana"}
     @combat_session.player_character.mana = 100
 
-    assert(@combat_session.player_account_for_mana(spell),
+    assert(@combat_session.player_account_for_cost(spell),
       "When the mana cost is less than or equal to the character's mana, the function should return true.")
 
     @combat_session.player_character.mana = 0
 
-    assert(!@combat_session.player_account_for_mana(spell),
+    assert(!@combat_session.player_account_for_cost(spell),
       "When the mana cost is greater than the character's mana, the function should return false.")
   end
 
   def test_player_cast_spell
     spell = {name: "magic missle", level: 1, type: "damage", dice: 4, number_of_dice: 1, damage_bonus: "magic", 
-           number_of_dice_bonus: "level", bonus_missles: "proficiency", mana_cost: 15, price: 150,
-           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."}
+           number_of_dice_bonus: "level", bonus_missles: "proficiency", casting_cost: 15, cost_pool: "mana", price: 150,
+           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."} 
 
     @combat_session.player_character.spell_failure_chance = 0
     @mock.expect :call, nil, [spell]
@@ -104,6 +104,14 @@ class PlayerTurnV2Test < Minitest::Test
     @combat_session.player_cast_spell(spell)
     assert_equal(current_hp, @combat_session.enemy.hp,
       "When the player's spell failure chance is 100%, the enemy should never get hit by the spell.")
+  end
+
+  def test_spell_pre_checks
+    spell = {name: "some healing spell", type: "healing", attribute: "hp"}
+    @combat_session.player_character.hp = 10
+    @combat_session.player_character.max_hp = 10
+    assert(!@combat_session.spell_pre_checks(spell),
+      "If the player is attempting to cast a healing spell but the attribute they're affecting is already full, the function should return false.")
   end
 
   def test_player_coordinate_cast
@@ -122,8 +130,8 @@ class PlayerTurnV2Test < Minitest::Test
 
   def test_player_cast_damage_spell
     spell = {name: "magic missle", level: 1, type: "damage", dice: 4, number_of_dice: 1, damage_bonus: "magic", 
-           number_of_dice_bonus: "level", bonus_missles: "proficiency", mana_cost: 15, price: 150,
-           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."}
+           number_of_dice_bonus: "level", bonus_missles: "proficiency", casting_cost: 15, cost_pool: "mana", price: 150,
+           description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."} 
 
     @combat_session.enemy.mag_resist = 100
     starting_hp = @combat_session.enemy.hp 
