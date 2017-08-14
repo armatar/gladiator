@@ -59,6 +59,8 @@ module CastSpellsPlayer
       player_cast_healing_spell(spell)
     elsif spell[:type] == "buff"
       player_cast_buff_spell(spell, get_bonus(spell[:bonus], @player_character))
+    elsif spell[:type] == "curse"
+      player_cast_curse_spell(spell, get_bonus(spell[:bonus], @player_character))
     end
   end
 
@@ -80,7 +82,7 @@ module CastSpellsPlayer
       @message += "Ally #{stat} has been updated to #{updated_stat}.\n"
     end
     @message += "\n"
-    @player_buff_counter = set_buff_counter(@player_buff_counter, spell, get_spell_time(@player_character, spell[:time]))
+    @player_buff_counter = set_list_of_effects(@player_buff_counter, spell, get_spell_time(@player_character, spell[:time], @turn),)
   end
 
   def player_reverse_buff_spells_loop(spells_to_reverse)
@@ -89,7 +91,7 @@ module CastSpellsPlayer
       player_reverse_buff_spell(spell, bonus)
     end
     @message += "\n"
-    @player_buff_counter = restore_buff_counter(@player_buff_counter, @turn)
+    @player_buff_counter = restore_list_of_effects(@player_buff_counter, @turn)
   end
 
   def player_reverse_buff_spell(spell, bonus)
@@ -99,6 +101,54 @@ module CastSpellsPlayer
     end
   end
 
-  def player_cast_curse_spell(spell)
+  def player_cast_curse_spell(spell, bonus)
+    if spell[:status_effect]
+      effect = StatusEffects.status_effects[spell[:status_effect]]
+      player_implement_status_effect(effect)
+      @message += "Enemy has been #{spell[:status_effect]}\n\n"
+    else
+      spell[:affected_stat].each do |stat|
+        updated_stat = @enemy.update_stat(stat, -bonus)
+        @message += "Enemy #{stat} has been updated to #{updated_stat}.\n"
+      end
+    end
+    @message += "\n"
+    @enemy_curse_counter = set_list_of_effects(@enemy_curse_counter, spell, get_spell_time(@player_character, spell[:time], @turn),)
+  end
+
+  def player_implement_status_effect(effect)
+    effect[:affected_stat].each do | stat |
+      updated_stat = @player_character.update_stat(stat, effect[:penalty])
+      @message += "Player's #{stat} has been updated to #{updated_stat}.\n"
+    end
+  end
+
+  def player_reverse_curse_spells_loop(spells_to_reverse)
+    spells_to_reverse.each do |spell|
+      bonus = get_bonus(spell[:bonus], @player_character)
+      player_reverse_curse_spell(spell, bonus)
+    end
+    @message += "\n"
+    @enemy_curse_counter = restore_list_of_effects(@enemy_curse_counter, @turn)
+  end
+
+  def player_reverse_curse_spell(spell, target)
+    if spell[:status_effect]
+      effect = StatusEffects.status_effects[spell[:status_effect]]
+      player_reverse_status_effect(effect)
+      @message += "Enemy has recovered from being #{spell[:status_effect]}\n\n"
+    else
+      spell[:affected_stat].each do |stat|
+        updated_stat = @enemy.update_stat(stat, -bonus)
+        @message += "Enemy #{stat} has been restored to #{updated_stat}.\n"
+      end
+    end
+  end
+
+  def player_reverse_status_effect(effect)
+    effect[:affected_stat].each do | stat |
+      updated_stat = @player_character.update_stat(stat, -effect[:penalty])
+      @message += "Player's #{stat} has been restored to #{updated_stat}.\n"
+    end
   end
 end

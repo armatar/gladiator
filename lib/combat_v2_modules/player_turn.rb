@@ -1,10 +1,23 @@
 module PlayerTurn
   def player_turn
+    player_consider_active_effects(@turn)
     player_combat_display
     @message = ""
     answer = ask_question("What do you want to do?", false, "You can use the number if you want!")
     system "clear"
     return verify_which_answer(answer)
+  end
+
+  def player_consider_active_effects(turn)
+    expired_spells = check_for_effect_expiration(@player_buff_counter, turn)
+    if expired_spells
+      player_reverse_buff_spells_loop(expired_spells)
+    end
+
+    expired_spells = check_for_effect_expiration(@enemy_curse_counter, turn)
+    if expired_spells
+      player_reverse_curse_spells_loop(expired_spells)
+    end
   end
 
   def player_combat_display

@@ -1,11 +1,12 @@
 require_relative 'combat_v2_modules.rb'
 require_relative 'user_interface.rb'
+require_relative 'status_effects.rb'
 
 class Combat
   include CombatV2Modules
   include UserInterface
 
-  attr_reader :player_character, :enemy, :turn, :player_buff_counter
+  attr_reader :player_character, :enemy, :turn
 
   def initialize(player_character, enemy, special_events)
     @player_character = player_character
@@ -14,6 +15,8 @@ class Combat
     @message = ""
     @turn = 1
     create_counters
+    #StatusEffects::create_status_effects_list
+    @status_effects = StatusEffects.status_effects
   end
 
   def create_counters

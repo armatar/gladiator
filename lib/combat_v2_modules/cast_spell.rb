@@ -64,18 +64,22 @@ module CastSpell
     end
   end
 
-  def get_spell_time(caster, time)
+  def get_spell_time(caster, time, turn)
     if time == "level"
-      return caster.level
+      return calculate_expiration_turn(caster.level, turn)
     elsif time == "charisma"
-      return caster.cha_modifier
+      return calculate_expiration_turn(caster.cha_modifier, turn)
     elsif time == "magic"
-      return caster.mag_modifier
+      return calculate_expiration_turn(caster.mag_modifier, turn)
     elsif time == "proficiency"
-      return caster.magic_prof
+      return calculate_expiration_turn(caster.magic_prof, turn)
     else
-      return time
+      return calculate_expiration_turn(time, turn)
     end
+  end
+
+  def calculate_expiration_turn(time, turn)
+    return turn + time + 1
   end
 
   def check_for_effect_expiration(list_of_current_effects, turn)
@@ -85,5 +89,25 @@ module CastSpell
       end
     end
     return false
+  end
+
+  def set_list_of_effects(list_of_effects, spell, time_to_expire)
+    if list_of_effects[time_to_expire]
+      value = list_of_effects[time_to_expire]
+      value.push(spell)
+      list_of_effects[time_to_expire] = value
+    else
+      list_of_effects[time_to_expire] = [spell]
+    end
+    return list_of_effects
+  end
+
+  def restore_list_of_effects(list_of_effects, turn)
+    list_of_effects.each_pair do |time_to_expire, spells|
+      if time_to_expire == turn
+        list_of_effects.delete(time_to_expire)
+      end
+    end
+    return list_of_effects
   end
 end

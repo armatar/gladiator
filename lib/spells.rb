@@ -52,8 +52,8 @@ class Spells
 
   def create_curse_spells
     @curse_spells = {
-      "ray of sickening" => {name: "ray of sickening", level: 1, type: "curse", status: "sickened", time: "level", 
-           casting_cost: 2555, cost_pool: "mana", cost: 250,
+      "ray of sickening" => {name: "ray of sickening", level: 1, type: "curse", status_effect: "sickened", time: "level", 
+           bonus: false, casting_cost: 25, cost_pool: "mana", cost: 250,
            description: "A black ray projects from your pointed finger, sickening your opponent."}
     }
   end

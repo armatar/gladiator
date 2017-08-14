@@ -22,7 +22,7 @@ module AutoAttack
       @message += "#{attacker.name} hits!\n"
       return true
     else
-      @message += "#{attacker.name} misses!\n"
+      @message += "#{attacker.name} misses!\n\n"
       return false
     end
   end
