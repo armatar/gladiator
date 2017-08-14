@@ -5,7 +5,7 @@ class Combat
   include CombatV2Modules
   include UserInterface
 
-  attr_reader :player_character, :enemy, :turn
+  attr_reader :player_character, :enemy, :turn, :player_buff_counter
 
   def initialize(player_character, enemy, special_events)
     @player_character = player_character
@@ -13,6 +13,14 @@ class Combat
     @special_events = special_events
     @message = ""
     @turn = 1
+    create_counters
+  end
+
+  def create_counters
+    @player_buff_counter = {}
+    @player_curse_counter = {}
+    @enemy_buff_counter = {}
+    @enemy_curse_counter = {}
   end
 
   def fight!

@@ -54,4 +54,22 @@ class CastSpellTest < Minitest::Test
     assert_equal(5, @combat_session.get_bonus(bonus, @player_character),
       "Function should return the character's magic proficiency when the dice bonus is proficiency.")
   end
+
+  def test_get_spell_time
+    @player_character.cha_modifier = 4
+    time = "charisma"
+    assert_equal(4, @combat_session.get_spell_time(@player_character, time),
+      "When the time is 'charisma', the function should return the caster's charisma modifier.")
+
+    time = 5
+    assert_equal(5, @combat_session.get_spell_time(@player_character, time),
+      "When the time is an integer, the function should return that integer.")
+  end
+
+  def test_check_for_effect_expiration
+    list_of_current_effects = {3 => ["spell1"], 4 => ["spell2", "spell4"], 5 => ["spell3"]}
+    turn = 4
+    assert_equal(["spell2", "spell4"], @combat_session.check_for_effect_expiration(list_of_current_effects, turn),
+      "Function should return the spells that are expiring on the turn sent in.")
+  end
 end

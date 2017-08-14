@@ -57,8 +57,33 @@ module CastSpell
       return caster.level
     elsif bonus_to_get == "magic"
       return caster.mag_modifier
+    elsif bonus_to_get == "charisma"
+      return caster.cha_modifier
     elsif bonus_to_get == false
       return 0
     end
+  end
+
+  def get_spell_time(caster, time)
+    if time == "level"
+      return caster.level
+    elsif time == "charisma"
+      return caster.cha_modifier
+    elsif time == "magic"
+      return caster.mag_modifier
+    elsif time == "proficiency"
+      return caster.magic_prof
+    else
+      return time
+    end
+  end
+
+  def check_for_effect_expiration(list_of_current_effects, turn)
+    list_of_current_effects.each_pair do |expire_turn, spells|
+      if expire_turn == turn
+        return list_of_current_effects[expire_turn]
+      end
+    end
+    return false
   end
 end

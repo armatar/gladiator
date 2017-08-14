@@ -42,10 +42,10 @@ class Spells
   def create_buff_spells
     @buff_spells = {
       "beguiler's grace" => {name: "beguiler's grace", level: 1, type: "buff", affected_stat: ["ac", "magic resist"], 
-          bonus: "cha", time: "level", casting_cost: 20, cost_pool: "mana", price: 200,
+          bonus: "charisma", time: "level", casting_cost: 20, cost_pool: "mana", price: 200,
           description: "You radiate such grace that your enemies struggle to hit you.\n+cha modifier to ac for a number of rounds equal to your level."},
       "shock weapon" => {name: "shock weapon", level: 1, type: "buff", affected_stat: ["attack", "damage"], 
-          bonus: "mag", time: "proficiency", casting_cost: 10, cost_pool: "mana", price: 100,
+          bonus: "magic", time: "proficiency", casting_cost: 10, cost_pool: "mana", price: 100,
           description: "Your weapon begins to crackle with electric energy.\n+mag modifier to attack and damage for a number of rounds equal to your magic proficiency"}
     }
   end

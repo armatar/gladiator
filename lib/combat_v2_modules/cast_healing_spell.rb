@@ -47,7 +47,7 @@ module CastHealingSpell
         return false
       end
     elsif attribute == "mana"
-     if caster.mana == caster.max_mana
+      if caster.mana == caster.max_mana
         @message += "Your mana is already full!"
         return true
       else

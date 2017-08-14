@@ -12,7 +12,7 @@ class CastHealingSpellTest < Minitest::Test
     @enemy.create_enemy
     @combat_session = Combat.new(@player_character, @enemy, "special event")
     @spell = {name: "cure light wounds", level: 1, type: "healing", attribute: "hp", dice: 8, number_of_dice: 1, 
-           healing_bonus: "proficiency", number_of_dice_bonus: false, mana_cost: 20, price: 200,
+           healing_bonus: "proficiency", number_of_dice_bonus: false, casting_cost: 20, cost_pool: "mana", price: 200,
            description: "You use your magic to mend some of your cuts and bruises. \nHeals 1d8 + magic proficiency point per level."}
   end
 

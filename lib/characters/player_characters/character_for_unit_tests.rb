@@ -2,7 +2,7 @@ require_relative "../player_character.rb"
 
 class CharacterForUnitTests < PlayerCharacter
     attr_writer :attack, :damage, :equipped_weapon, :ac, :hp, :magic_prof, :level, :mana
-    attr_writer :spell_failure_chance, :max_hp
+    attr_writer :spell_failure_chance, :max_hp, :cha_modifier, :mag_resist, :mag_modifier
 
   def initialize(name, race)
     super(name, race)
