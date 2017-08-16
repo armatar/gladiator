@@ -5,7 +5,7 @@ module PlayerTurn
     @message = ""
     answer = ask_question("What do you want to do?", false, "You can use the number if you want!")
     system "clear"
-    return verify_which_answer(answer)
+    return player_verify_which_answer(answer)
   end
 
   def player_consider_active_effects(turn)
@@ -27,7 +27,7 @@ module PlayerTurn
     display_combat_info(@player_character, @enemy, @turn)
   end
 
-  def verify_which_answer(answer)
+  def player_verify_which_answer(answer)
   	if answer == "swing your #{@player_character.equipped_weapon[:name]}" || answer == "1"
       #auto attack
       player_auto_attack

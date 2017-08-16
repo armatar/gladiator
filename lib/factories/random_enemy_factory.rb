@@ -1,4 +1,5 @@
 require "byebug"
+require_relative "../spells.rb"
 
 class RandomEnemyFactory
 
@@ -24,6 +25,7 @@ class RandomEnemyFactory
     update_random_enemy
     get_equipped_weapon(@primary_skill)
     @random_enemy.calculate_initial_stats
+    get_random_known_spells
     return @random_enemy
   end
 
@@ -192,7 +194,17 @@ class RandomEnemyFactory
     end
   end
 
-  def set_known_spells
+  def get_random_known_spells
+
+    number_of_known_spells = 1 + @magic_prof
+    spells_for_randomizing = Spells.new
+    spells_for_randomizing.create_spell_list
+    spells_for_randomizing = spells_for_randomizing.spells
+    known_spells = spells_for_randomizing.to_a.sample(number_of_known_spells).to_h
+
+    known_spells.each_pair do |spell_key, spell_value|
+      @random_enemy.add_spell_to_known_spells(spell_key, spell_value)
+    end
   end
 
   def set_inventory

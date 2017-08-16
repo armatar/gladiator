@@ -37,14 +37,12 @@ module CastSpell
       if caster.mana >= spell[:casting_cost]
         return true
       else
-        @message += "Not enough mana to cast #{spell[:name]}!\n"
         return false
       end
     elsif spell[:cost_pool] == "hp"
       if caster.hp >= spell[:casting_cost]
         return true
       else
-        @message += "Not enough hp to cast #{spell[:name]}!\n"
         return false
       end
     end

@@ -33,15 +33,15 @@ class PlayerTurnV2Test < Minitest::Test
     fake.string
   end
 
-  def test_verify_which_answer
+  def test_player_verify_which_answer
     @mock.expect :call, true
     @combat_session.stub(:player_auto_attack, @mock) do
-      @combat_session.verify_which_answer("1")
+      @combat_session.player_verify_which_answer("1")
     end
 
     @mock.expect :call, true
     @combat_session.stub(:player_use_item, @mock) do
-      @combat_session.verify_which_answer("5")
+      @combat_session.player_verify_which_answer("5")
     end
     assert(@mock.verify)
   end

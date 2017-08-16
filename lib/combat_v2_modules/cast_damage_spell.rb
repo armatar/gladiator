@@ -18,8 +18,16 @@ module CastDamageSpell
 
   def get_full_spell_damage(base_damage, bonus_damage)
     damage = base_damage + bonus_damage
-    @message += " + #{bonus_damage} = #{damage}. \n"
+    @message += " + #{bonus_damage} = #{damage}. \n\n"
     return damage
+  end
+
+  def ensure_damage_is_positive(damage)
+    if damage < 0
+      return 0
+    else
+      return damage
+    end
   end
 
   def coordinate_damage(caster, spell)
@@ -27,6 +35,7 @@ module CastDamageSpell
     base_damage = get_base_spell_damage(spell, get_bonus(dice_bonus, caster))
     damage_bonus = spell[:damage_bonus]
     damage = get_full_spell_damage(base_damage, get_bonus(damage_bonus, caster))
+    damage = ensure_damage_is_positive(damage)
     return damage
   end
 

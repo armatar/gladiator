@@ -47,6 +47,11 @@ module AutoAttack
 
   def calculate_real_damage(damage_bonus, damage_roll)
     damage = damage_roll + damage_bonus
+
+    if damage < 0 
+      damage = 0
+    end
+
     @message += "Damage: #{damage_roll} + #{damage_bonus} = #{damage}\n\n"
     return damage
   end

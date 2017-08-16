@@ -85,6 +85,10 @@ class Combat
   end
 
   def enemy_phase
+    continue = false
+    while !continue
+      continue = enemy_turn
+    end
   end
 
   def who_is_dead(player_character_hp, enemy_hp)

@@ -26,14 +26,14 @@ module CastHealingSpell
 
   def get_full_spell_healing(base_healing, bonus_healing)
     healing = base_healing + bonus_healing
-    @message += " + #{bonus_healing} = #{healing}. \n"
+    @message += " + #{bonus_healing} = #{healing}. \n\n"
     return healing
   end
 
   def get_max_healing(healing, hp, max_hp)
     if (hp + healing) > max_hp
       healing = max_hp - hp
-      @message += "Actual healing due to current health: #{healing} \n"
+      @message += "Actual healing due to current health: #{healing} \n\n"
     end
     return healing
   end

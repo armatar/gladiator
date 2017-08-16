@@ -15,11 +15,11 @@ module CastSpellsPlayer
     if !spell
       return false
     else
-      return spell_pre_checks(spell)
+      return player_spell_pre_checks(spell)
     end
   end
 
-  def spell_pre_checks(spell)
+  def player_spell_pre_checks(spell)
     if spell[:type] == "healing"
       if !check_if_fully_healed(@player_character, spell[:attribute])
         return player_account_for_cost(spell)
@@ -41,6 +41,7 @@ module CastSpellsPlayer
       player_cast_spell(spell)
       return true
     else
+      @message += "Not enough #{spell[:cost_pool]} to cast #{spell[:name]}!\n"
       return false
     end
   end
