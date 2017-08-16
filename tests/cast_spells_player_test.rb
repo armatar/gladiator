@@ -52,7 +52,7 @@ class CastSpellsPlayerTest < Minitest::Test
     spell = {name: "some healing spell", type: "healing", attribute: "hp"}
     @combat_session.player_character.hp = 10
     @combat_session.player_character.max_hp = 10
-    assert(!@combat_session.spell_pre_checks(spell),
+    assert(!@combat_session.player_spell_pre_checks(spell),
       "If the player is attempting to cast a healing spell but the attribute they're affecting is already full, the function should return false.")
   end
 

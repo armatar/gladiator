@@ -34,7 +34,5 @@ class TestCharacter < PlayerCharacter
     add_item("bronze dual swords", @items.item_list["bronze dual swords"])
     add_item("health potion", @items.item_list["health potion"])
     add_item("bronze shield", @items.item_list["bronze shield"])
-
-    @mag_resist = -10
   end
 end

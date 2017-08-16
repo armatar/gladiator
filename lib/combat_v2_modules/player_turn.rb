@@ -1,5 +1,6 @@
 module PlayerTurn
   def player_turn
+    #player_consider_cbm
     player_consider_active_effects(@turn)
     player_combat_display
     @message = ""
@@ -80,34 +81,6 @@ module PlayerTurn
       return true
     else
       return false
-    end
-  end
-
-  def player_do_cbm
-    valid_answer = false
-
-    while !valid_answer
-      display_CBM(@maneuvers, @grappled)
-      answer = ask_question("Which Combat Maneuver would you like to preform?", false, "Type 'back' to return.")
-
-      if answer == "back"
-        @turn -= 1
-        return true
-      elsif !@maneuvers[answer]
-        print_error_message("That's not a valid combat maneuver. Try again.")
-      else
-        success = cbm_attack_attempt(@enemy, @ally)
-        if success
-          if answer == "grapple"
-            @grappled = true
-          end
-          implement_cbm("enemy", @maneuvers[answer])
-          @current_enemy_cbm = @maneuvers[answer]
-          return false
-        else
-          return false
-        end
-      end
     end
   end
 end

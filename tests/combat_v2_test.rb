@@ -88,7 +88,7 @@ class CombatV2Test < Minitest::Test
       @combat_session.combat_phase(false)
     end
 
-    @mock.expect :call, false, [@player_character.hp, @enemy.hp]
+    @mock.expect :call, false, [@combat_session.player_character.hp, @combat_session.enemy.hp]
     @combat_session.stub(:check_for_death, @mock) do
       @combat_session.combat_phase(false)
     end

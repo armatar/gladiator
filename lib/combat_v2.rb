@@ -1,6 +1,7 @@
 require_relative 'combat_v2_modules.rb'
 require_relative 'user_interface.rb'
 require_relative 'status_effects.rb'
+require_relative 'combat_maneuvers.rb'
 
 class Combat
   include CombatV2Modules

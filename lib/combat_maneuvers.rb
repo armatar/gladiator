@@ -14,11 +14,4 @@ class CombatManeuvers
   def self.maneuvers
     @@maneuvers = create_list_of_maneuvers
   end
-
 end
-
-=begin
-cbm = CombatManeuvers.new
-cbm.create_list_of_maneuvers
-cbm.show_CBM
-=end
