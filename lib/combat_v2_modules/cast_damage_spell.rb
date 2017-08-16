@@ -32,6 +32,9 @@ module CastDamageSpell
 
   def loop_through_missles(caster, spell, number_of_missles)
     damage = 0
+    if number_of_missles == 0
+      number_of_missles = 1
+    end
     number_of_missles.times do
       damage += coordinate_damage(caster, spell)
     end

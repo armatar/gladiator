@@ -28,6 +28,7 @@ class TestCharacter < PlayerCharacter
     add_spell_to_known_spells("beguiler's grace", @full_spell_list["beguiler's grace"])
     add_spell_to_known_spells("shock weapon", @full_spell_list["shock weapon"])
     add_spell_to_known_spells("ray of sickening", @full_spell_list["ray of sickening"])
+    add_spell_to_known_spells("ear-piercing scream", @full_spell_list["ear-piercing scream"])
 
     add_item("bronze sword", @items.item_list["bronze sword"])
     add_item("bronze dual swords", @items.item_list["bronze dual swords"])

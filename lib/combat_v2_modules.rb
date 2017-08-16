@@ -8,4 +8,5 @@ module CombatV2Modules
   include CastSpell
   include CastDamageSpell
   include CastHealingSpell
+  include CombatEffects
 end

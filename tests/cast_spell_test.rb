@@ -67,43 +67,4 @@ class CastSpellTest < Minitest::Test
       "When the time is an integer, the function should return that integer plus the turn plus one.")
   end
 
-  def test_check_for_effect_expiration
-    list_of_current_effects = {3 => ["spell1"], 4 => ["spell2", "spell4"], 5 => ["spell3"]}
-    turn = 4
-    assert_equal(["spell2", "spell4"], @combat_session.check_for_effect_expiration(list_of_current_effects, turn),
-      "Function should return the spells that are expiring on the turn sent in.")
-
-    turn = 2 
-    assert(!@combat_session.check_for_effect_expiration(list_of_current_effects, turn),
-      "Function should return false if there are no effects expiring this turn.")   
-  end
-
-  def test_set_list_of_effects
-    counter = {3 => ["spell1"], 4 => ["spell2"], 5 => ["spell3"]}
-    spell = "spell4"
-    time_to_expire = 4
-    new_counter = {3 => ["spell1"], 4 => ["spell2", "spell4"], 5 => ["spell3"]}
-
-    resulting_counter = @combat_session.set_list_of_effects(counter, spell, time_to_expire)
-    assert_equal(new_counter, resulting_counter,
-      "When a buff spell is cast to expire at the same time as another spell, it should be added to the effect array.")
-
-    counter = {3 => ["spell1"], 4 => ["spell2"], 5 => ["spell3"]}
-    spell = "spell4"
-    time_to_expire = 7
-    new_counter = {3 => ["spell1"], 4 => ["spell2"], 5 => ["spell3"], 7 => ["spell4"]}
-
-    resulting_counter = @combat_session.set_list_of_effects(counter, spell, time_to_expire)
-    assert_equal(new_counter, resulting_counter,
-      "The buff spell should be appended to the end of the array.")
-  end
-
-  def test_restore_list_of_effects
-    counter = {4 => ["spell2", "spell4"], 5 => ["spell3"]}
-    turn = 4
-    counter_should_be = {5 => ["spell3"]}
-    actual_counter = @combat_session.restore_list_of_effects(counter, turn)
-    assert_equal(counter_should_be, actual_counter,
-      "The counter should remove the reference to the spell at the turn sent in.")
-  end
 end

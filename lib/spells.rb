@@ -1,5 +1,5 @@
 class Spells
-  attr_reader :spells, :damage_spells, :healing_spells, :buff_spells, :curse_spells
+  attr_reader :spells, :damage_spells, :healing_spells, :buff_spells, :curse_spells, :hybrid_spells
 
   def initialize
   end
@@ -9,6 +9,7 @@ class Spells
     create_healing_spells
     create_buff_spells
     create_curse_spells
+    create_hybrid_spells
     create_master_spell_list
   end
 
@@ -18,6 +19,7 @@ class Spells
     @spells.merge!(@healing_spells)
     @spells.merge!(@buff_spells)
     @spells.merge!(@curse_spells)
+    @spells.merge!(@hybrid_spells)
   end
 
   def create_damage_spells
@@ -55,6 +57,14 @@ class Spells
       "ray of sickening" => {name: "ray of sickening", level: 1, type: "curse", status_effect: "sickened", time: "level", 
            bonus: false, casting_cost: 25, cost_pool: "mana", cost: 250,
            description: "A black ray projects from your pointed finger, sickening your opponent."}
+    }
+  end
+
+  def create_hybrid_spells
+    @hybrid_spells = {
+      "ear-piercing scream" => {name: "ear-piercing scream", level: 1, type: "hybrid", hybrid_types: ["damage", "curse"], dice: 6, number_of_dice: 1, damage_bonus: false, 
+           number_of_dice_bonus: "proficiency", bonus_missles: false, status_effect: "sickened", time: 1, casting_cost: 50, cost_pool: "mana", price: 300,
+           description: "You unleash a powerful scream. \nTarget is dazed for 1 round and takes 1d6 points of sonic damage per proficiency."}
     }
   end
 end

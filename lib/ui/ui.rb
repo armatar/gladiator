@@ -233,7 +233,7 @@ module UI
       print_title("S P E L L S")
       print_line
       spell_list.each_pair do |key, value|
-        puts Paint[key.ljust(25), :white] + Paint["Mana Cost: ", :underline] + Paint[value[:mana_cost].to_s, :underline]
+        puts Paint[key.ljust(25), :white] + Paint["#{value[:cost_pool].capitalize} Cost: ", :underline] + Paint[value[:casting_cost].to_s, :underline]
         puts value[:description]
         new_line
       end

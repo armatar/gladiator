@@ -53,7 +53,7 @@ module PlayerTurn
       # equip a weapon
       return player_equip_weapon
     else 
-      @message += "Please select a number from the list provided."
+      @message += "#{answer} is not an option. Please select an answer from the list."
       return false
     end
   end

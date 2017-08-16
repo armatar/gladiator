@@ -48,6 +48,14 @@ class CastSpellsPlayerTest < Minitest::Test
     assert(@mock.verify)
   end
 
+  def test_spell_pre_checks
+    spell = {name: "some healing spell", type: "healing", attribute: "hp"}
+    @combat_session.player_character.hp = 10
+    @combat_session.player_character.max_hp = 10
+    assert(!@combat_session.spell_pre_checks(spell),
+      "If the player is attempting to cast a healing spell but the attribute they're affecting is already full, the function should return false.")
+  end
+
   def test_player_account_for_cost
     spell = {name: "spell with too high a mana cost", casting_cost: 20, cost_pool: "mana"}
     @combat_session.player_character.mana = 100
@@ -67,7 +75,7 @@ class CastSpellsPlayerTest < Minitest::Test
            description: "Missles shoot from your fingers toward your opponent. \nDeals 1d4 + cha modifier damage per level."} 
 
     @combat_session.player_character.spell_failure_chance = 0
-    @mock.expect :call, nil, [spell]
+    @mock.expect :call, nil, [spell, spell[:type]]
     @combat_session.stub(:player_coordinate_cast, @mock) do
       @combat_session.player_cast_spell(spell)
     end
@@ -81,26 +89,31 @@ class CastSpellsPlayerTest < Minitest::Test
       "When the player's spell failure chance is 100%, the enemy should never get hit by the spell.")
   end
 
-  def test_spell_pre_checks
-    spell = {name: "some healing spell", type: "healing", attribute: "hp"}
-    @combat_session.player_character.hp = 10
-    @combat_session.player_character.max_hp = 10
-    assert(!@combat_session.spell_pre_checks(spell),
-      "If the player is attempting to cast a healing spell but the attribute they're affecting is already full, the function should return false.")
-  end
-
   def test_player_coordinate_cast
     spell = @combat_session.player_character.known_spells["magic missle"]
     @mock.expect :call, nil, [spell]
     @combat_session.stub(:player_cast_damage_spell, @mock) do
-      @combat_session.player_coordinate_cast(spell)
+      @combat_session.player_coordinate_cast(spell, spell[:type])
     end
 
     spell = @combat_session.player_character.known_spells["cure light wounds"]
     @mock.expect :call, nil, [spell]
     @combat_session.stub(:player_cast_healing_spell, @mock) do
-      @combat_session.player_coordinate_cast(spell)
+      @combat_session.player_coordinate_cast(spell, spell[:type])
     end
+  end
+
+  def test_player_cast_hybrid_spell
+    spell = {name: "ear-piercing scream", level: 1, type: "hybrid", hybrid_types: ["damage", "curse"], dice: 6, number_of_dice: 1, damage_bonus: false, 
+           number_of_dice_bonus: "proficiency", bonus_missles: false, status_effect: "sickened", time: 1, casting_cost: 50, cost_pool: "mana", price: 300,
+           description: "You unleash a powerful scream. \nTarget is dazed for 1 round and takes 1d6 points of sonic damage per proficiency."}
+    @mock.expect :call, nil, [spell, "damage"]
+    @mock.expect :call, nil, [spell, "curse"]
+    @combat_session.stub(:player_coordinate_cast, @mock) do
+      @combat_session.player_cast_hybrid_spell(spell)
+    end
+
+    assert(@mock.verify)
   end
 
   def test_player_cast_damage_spell
@@ -169,7 +182,7 @@ class CastSpellsPlayerTest < Minitest::Test
     bonus = 5
     @combat_session.player_character.ac = 15
     @combat_session.player_character.mag_resist = 20
-    
+
     @combat_session.player_reverse_buff_spell(spell, bonus)
     assert_equal(10, @combat_session.player_character.ac)
     assert_equal(15, @combat_session.player_character.mag_resist)
