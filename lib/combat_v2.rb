@@ -16,8 +16,13 @@ class Combat
     @message = ""
     @turn = 1
     create_counters
-    #StatusEffects::create_status_effects_list
     @status_effects = StatusEffects.status_effects
+    create_cbm_status
+  end
+
+  def create_cbm_status
+    @enemy_cbm_status = false
+    @player_cbm_status = false
   end
 
   def create_counters
@@ -28,12 +33,18 @@ class Combat
   end
 
   def fight!
-    return start_combat(player_goes_first?(@player_character.init, @enemy.init))
+    who_dead = start_combat(player_goes_first?(@player_character.init, @enemy.init))
+    display_activity_log(@message)
+    if who_dead == "enemy"
+      return kill_or_spare
+    else
+      return who_dead
+    end
   end
 
   def start_combat(player_turn)
     combat_loop(player_turn)
-    who_dead = who_is_dead(@player_character.hp, @enemy.hp)
+    who_dead = who_is_dead
     return who_dead
   end
 
@@ -62,7 +73,7 @@ class Combat
 
   def combat_phase(player_turn)
     initiate_correct_turn(player_turn)
-    result = check_for_death(@player_character.hp, @enemy.hp) 
+    result = check_for_death
     return result
   end
 
@@ -92,18 +103,34 @@ class Combat
     end
   end
 
-  def who_is_dead(player_character_hp, enemy_hp)
-    if player_character_hp <= 0 && enemy_hp <= 0
+  def kill_or_spare
+    continue = false
+    while !continue
+      print_line
+      answer = ask_question("Kill him or spare his life?", ["kill", "spare"], 
+                            "Think carefully about your decision as it may have lasting effects.")
+      if answer == "kill"
+        return answer
+      elsif answer == "spare"
+        return answer
+      else
+        error_message("Please type either 'kill' or 'spare'.")
+      end
+    end
+  end
+
+  def who_is_dead
+    if @player_character.hp <= 0 && @enemy.hp <= 0
       return "both"
-    elsif player_character_hp <= 0
+    elsif @player_character.hp <= 0
       return "player"
     else
       return "enemy"
     end
   end
 
-  def check_for_death(player_character_hp, enemy_hp)
-    if player_character_hp <= 0 || enemy_hp <= 0
+  def check_for_death
+    if @player_character.hp <= 0 || @enemy.hp <= 0
       return true
     else
       return false

@@ -12,5 +12,6 @@ module CombatV2Modules
   include CastHealingSpell
   include CombatEffects
   include PlayerCBM
+  include EnemyCBM
   include PerformCBM
 end

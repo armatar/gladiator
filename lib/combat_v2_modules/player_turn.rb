@@ -1,6 +1,25 @@
 module PlayerTurn
   def player_turn
-    #player_consider_cbm
+    if player_consider_cbm
+      return player_active_cbm_combat_path
+    else
+      return player_typical_combat_path
+    end
+  end
+
+  def player_consider_cbm
+    if @player_cbm_status == "grappled"
+      return true
+    elsif @player_cbm_status == "tripped"
+      return true
+    elsif @enemy_cbm_status == "grappled"
+      return true
+    else
+      return false
+    end
+  end
+
+  def player_typical_combat_path
     player_consider_active_effects(@turn)
     player_combat_display
     @message = ""
@@ -44,9 +63,7 @@ module PlayerTurn
       return player_get_spell
     elsif answer == "perform a combat maneuver" || answer == "4"
       # do cbm
-      #return player_do_cbm
-      @message += "Currently disabled."
-      return false
+      return player_perform_cbm
     elsif answer == "use an item" || answer == "5"
       # use an item
       return player_use_item
@@ -56,6 +73,19 @@ module PlayerTurn
     else 
       @message += "#{answer} is not an option. Please select an answer from the list."
       return false
+    end
+  end
+
+  def player_attack_of_opportunity
+    system "clear"
+    display_activity_log(@message)
+    message = "#{@enemy.name.capitalize} has provoked an attack of opportunity. Attack?"
+    answer = ask_question(message, ["attack", "relent"])
+    if answer == "attack"
+      @message += "#{@player_character.name.capitalize} takes the attack of opportunity."
+      player_auto_attack
+    else
+      @message += "#{@player_character.name.capitalize} does not take the attack of opportunity."
     end
   end
 

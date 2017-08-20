@@ -8,8 +8,8 @@ class StatusEffects
       "deafened" => {name: "deafened", affected_stat: ["spell failure"], penalty: 30},
       "entangled" => {name: "entangled", affected_stat: ["attack", "dex modifier"], penalty: -2},
       "shaken" => {name: "shaken", affected_stat: ["attack", "magic resist"], penalty: -2},
-      "tripped" => {name: "tripped", affected_stat: ["ac"], penalty: -4},
-      "grappled" => {name: "grappled", affected_stat: ["attack", "dex modifier"], penalty: -2},
+      "tripped" => {name: "tripped", affected_stat: ["ac", "spell failure"], penalty: -4},
+      "grappled" => {name: "grappled", affected_stat: ["attack", "dex modifier", "spell failure"], penalty: -2},
       "pinned" => {name: "pinned", affected_stat: [], penalty: 0},
     }
     return status_effects

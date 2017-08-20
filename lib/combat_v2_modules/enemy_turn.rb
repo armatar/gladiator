@@ -1,7 +1,26 @@
 module EnemyTurn
   def enemy_turn
+    if enemy_consider_cbm
+      return enemy_active_cbm_combat_path
+    else
+      return enemy_typical_combat_path
+    end
+  end
+
+  def enemy_consider_cbm
+    if @enemy_cbm_status == "grappled"
+      return true
+    elsif @enemy_cbm_status == "tripped"
+      return true
+    elsif @player_cbm_status == "grappled"
+      return true
+    else
+      return false
+    end
+  end
+  def enemy_typical_combat_path
     enemy_consider_active_effects(@turn)
-    action = rand(1..3)
+    action = rand(1..4)
     return enemy_verify_which_answer(action.to_s)
   end
 
@@ -37,12 +56,15 @@ module EnemyTurn
       return false
     elsif answer == "cast a spell" || answer == "3"
       # cast a spell
-      return enemy_get_spell
+      if @enemy.known_spells.length == 0
+        return false
+      else
+        return enemy_get_spell
+      end
     elsif answer == "perform a combat maneuver" || answer == "4"
       # do cbm
       #return enemy_do_cbm
-      #@message += "Currently disabled."
-      return false
+      return enemy_perform_cbm
     elsif answer == "use an item" || answer == "5"
       # use an item
       return enemy_use_item
@@ -53,6 +75,11 @@ module EnemyTurn
       #@message += "#{answer} is not an option. Please select an answer from the list."
       return false
     end
+  end
+
+  def enemy_attack_of_opportunity
+    @message += "#{@enemy.name.capitalize} takes the attack of opportunity."
+    enemy_auto_attack
   end
 
   def enemy_auto_attack
@@ -77,34 +104,6 @@ module EnemyTurn
       return true
     else
       return false
-    end
-  end
-
-  def enemy_do_cbm
-    valid_answer = false
-
-    while !valid_answer
-      display_CBM(@maneuvers, @grappled)
-      answer = ask_question("Which Combat Maneuver would you like to preform?", false, "Type 'back' to return.")
-
-      if answer == "back"
-        @turn -= 1
-        return true
-      elsif !@maneuvers[answer]
-        print_error_message("That's not a valid combat maneuver. Try again.")
-      else
-        success = cbm_attack_attempt(@enemy, @ally)
-        if success
-          if answer == "grapple"
-            @grappled = true
-          end
-          implement_cbm("enemy", @maneuvers[answer])
-          @current_enemy_cbm = @maneuvers[answer]
-          return false
-        else
-          return false
-        end
-      end
     end
   end
 end

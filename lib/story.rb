@@ -2,7 +2,7 @@ require "require_all"
 
 require_relative 'all_days.rb'
 require_relative 'user_interface.rb'
-require_relative 'combat.rb'
+require_relative 'combat_v2.rb'
 require_relative 'saves.rb'
 require_relative "characters/player_character.rb"
 require_relative "factories/random_enemy_factory.rb"

@@ -11,7 +11,20 @@ class CombatManeuvers
     return maneuvers
   end
 
+  def self.create_actionable_maneuvers
+    actionable_maneuvers = {
+      "trip" => {name: "trip", status: "tripped", fervor: 10, description: "Attempt to knock your opponent over."},
+      "disarm" => {name: "disarm", fervor: 10, description: "Attempt to disarm your opponent."},
+      "grapple" => {name: "grapple", status: "grappled", fervor: 10, description: "Attempt to grab your opponent. If successful, you can attempt to pin them down."}
+    }
+    return actionable_maneuvers
+  end
+
   def self.maneuvers
     @@maneuvers = create_list_of_maneuvers
+  end
+
+  def self.actionable_maneuvers
+    @@actionable_maneuvers = create_actionable_maneuvers
   end
 end

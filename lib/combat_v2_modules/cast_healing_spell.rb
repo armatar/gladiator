@@ -40,15 +40,13 @@ module CastHealingSpell
 
   def check_if_fully_healed(caster, attribute)
     if attribute == "hp"
-      if caster.hp == caster.max_hp
-        @message += "You are already fully healed!"
+      if caster.hp >= caster.max_hp
         return true
       else
         return false
       end
     elsif attribute == "mana"
-      if caster.mana == caster.max_mana
-        @message += "Your mana is already full!"
+      if caster.mana >= caster.max_mana
         return true
       else
         return false

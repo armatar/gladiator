@@ -1,20 +1,22 @@
 --- !ruby/object:PlayerCharacter
 items: !ruby/object:Items
   default_weapon:
-    fists: &3
+    fists: &10
       :name: fists
       :type: unarmed weapon
       :dice: 3
       :number_of_dice: 1
+      :number_of_attacks: 2
       :crit: 20
       :crit_damage: 3
       :enchantment: 0
-  item_list: &2
+  item_list: &9
     bronze sword:
       :name: bronze sword
       :type: 1-hand weapon
       :dice: 6
       :number_of_dice: 1
+      :number_of_attacks: 1
       :enchantment: 0
       :crit: 19
       :crit_damage: 2
@@ -24,6 +26,7 @@ items: !ruby/object:Items
       :type: 2-hand weapon
       :dice: 8
       :number_of_dice: 1
+      :number_of_attacks: 1
       :enchantment: 0
       :crit: 20
       :crit_damage: 3
@@ -33,6 +36,7 @@ items: !ruby/object:Items
       :type: unarmed weapon
       :dice: 4
       :number_of_dice: 1
+      :number_of_attacks: 2
       :enchantment: 0
       :crit: 20
       :crit_damage: 3
@@ -42,6 +46,7 @@ items: !ruby/object:Items
       :type: dual wield weapon
       :dice: 6
       :number_of_dice: 1
+      :number_of_attacks: 2
       :enchantment: 0
       :crit: 18
       :crit_damage: 2
@@ -51,15 +56,10 @@ items: !ruby/object:Items
       :type: staff
       :dice: 4
       :number_of_dice: 1
+      :number_of_attacks: 1
       :enchantment: 0
       :crit: 20
       :crit_damage: 2
-      :price: 10
-    bronze shield:
-      :name: bronze shield
-      :type: shield
-      :defense_bonus: 1
-      :enchantment: 0
       :price: 10
     health potion:
       :name: health potion
@@ -67,9 +67,15 @@ items: !ruby/object:Items
       :stat: hp
       :bonus: 20
       :price: 10
+    bronze shield:
+      :name: bronze shield
+      :type: shield
+      :defense_bonus: 1
+      :enchantment: 0
+      :price: 10
 spells_class: !ruby/object:Spells
-  spells: &1
-    burning hands:
+  damage_spells:
+    burning hands: &1
       :name: burning hands
       :level: 1
       :type: damage
@@ -77,11 +83,13 @@ spells_class: !ruby/object:Spells
       :number_of_dice: 1
       :damage_bonus: false
       :number_of_dice_bonus: proficiency
-      :mana_cost: 10
+      :bonus_missles: false
+      :casting_cost: 10
+      :cost_pool: mana
       :price: 100
       :description: "You touch your opponent with hands of flame. \nDeals 1d6 damage
         per magic proficiency point."
-    magic missle:
+    magic missle: &2
       :name: magic missle
       :level: 1
       :type: damage
@@ -89,86 +97,125 @@ spells_class: !ruby/object:Spells
       :number_of_dice: 1
       :damage_bonus: magic
       :number_of_dice_bonus: level
-      :mana_cost: 15
+      :bonus_missles: proficiency
+      :casting_cost: 15
+      :cost_pool: mana
       :price: 150
       :description: "Missles shoot from your fingers toward your opponent. \nDeals
         1d4 + cha modifier damage per level."
-    cure light wounds:
+  healing_spells:
+    cure light wounds: &3
       :name: cure light wounds
       :level: 1
       :type: healing
+      :attribute: hp
       :dice: 8
       :number_of_dice: 1
       :healing_bonus: proficiency
       :number_of_dice_bonus: false
-      :mana_cost: 20
+      :casting_cost: 20
+      :cost_pool: mana
       :price: 200
       :description: "You use your magic to mend some of your cuts and bruises. \nHeals
         1d8 + magic proficiency point per level."
-    beguiler's grace:
+  buff_spells:
+    beguiler's grace: &4
       :name: beguiler's grace
       :level: 1
       :type: buff
       :affected_stat:
       - ac
       - magic resist
-      :bonus: cha
+      :bonus: charisma
       :time: level
-      :mana_cost: 20
+      :casting_cost: 20
+      :cost_pool: mana
       :price: 200
       :description: |-
         You radiate such grace that your enemies struggle to hit you.
         +cha modifier to ac for a number of rounds equal to your level.
-    shock weapon:
+    shock weapon: &5
       :name: shock weapon
       :level: 1
       :type: buff
       :affected_stat:
       - attack
       - damage
-      :bonus: mag
+      :bonus: magic
       :time: proficiency
-      :mana_cost: 10
+      :casting_cost: 10
+      :cost_pool: mana
       :price: 100
       :description: |-
         Your weapon begins to crackle with electric energy.
         +mag modifier to attack and damage for a number of rounds equal to your magic proficiency
-    ray of sickening:
+  curse_spells:
+    ray of sickening: &6
       :name: ray of sickening
       :level: 1
       :type: curse
-      :status: sickened
+      :status_effect: sickened
       :time: level
-      :mana_cost: 2555
+      :bonus: false
+      :casting_cost: 25
+      :cost_pool: mana
       :cost: 250
       :description: A black ray projects from your pointed finger, sickening your
         opponent.
+  hybrid_spells:
+    ear-piercing scream: &7
+      :name: ear-piercing scream
+      :level: 1
+      :type: hybrid
+      :hybrid_types:
+      - damage
+      - curse
+      :dice: 6
+      :number_of_dice: 1
+      :damage_bonus: false
+      :number_of_dice_bonus: proficiency
+      :bonus_missles: false
+      :status_effect: sickened
+      :time: 1
+      :casting_cost: 50
+      :cost_pool: mana
+      :price: 300
+      :description: "You unleash a powerful scream. \nTarget is dazed for 1 round
+        and takes 1d6 points of sonic damage per proficiency."
+  spells: &8
+    burning hands: *1
+    magic missle: *2
+    cure light wounds: *3
+    beguiler's grace: *4
+    shock weapon: *5
+    ray of sickening: *6
+    ear-piercing scream: *7
 name: a
 race: drai
 level: 1
-full_spell_list: *1
+full_spell_list: *8
 known_spells: {}
-item_list: *2
+item_list: *9
 inventory:
-  fists: *3
-default_weapon: *3
-equipped_weapon: *3
+  fists: *10
+default_weapon: *10
+equipped_weapon: *10
 equipped_shield: false
-str: 8
-dex: 8
-con: 8
+str: 18
+dex: 18
+con: 18
 mag: 8
 cha: 8
-str_modifier: -1
-dex_modifier: -1
-con_modifier: -1
+str_modifier: 4
+dex_modifier: 4
+con_modifier: 4
 mag_modifier: -1
 cha_modifier: -1
 one_hand_prof: 0
 dual_wield_prof: 0
 two_hand_prof: 0
 magic_prof: 0
-unarmed_prof: 0
+unarmed_prof: 1
 spell_failure_chance: 0
 armor_bonus: 0
 shield_bonus: 0
@@ -176,9 +223,9 @@ max_dex_bonus_for_ac: false
 max_proficency: 10
 date: 1
 hook: 2
-min_str: 8
-min_dex: 8
-min_con: 8
+min_str: 18
+min_dex: 18
+min_con: 18
 min_mag: 8
 min_cha: 8
 max_str: 18
@@ -195,27 +242,28 @@ wealth: 0
 fame: 0
 current_exp: 0
 exp_needed: 100
-available_attribute_points: 30
+available_attribute_points: 0
 total_proficiency_points: 1
-available_proficiency_points: 1
-hp: 4
-max_hp: 4
+available_proficiency_points: 0
+init: 4
+hp: 23
+max_hp: 23
 bab: 1
-ac: 9
-one_hand_atk: 0
-one_hand_damage: -1
-dual_wield_atk: 0
-dual_wield_damage: -1
-two_hand_atk: 0
-two_hand_damage: -2
-unarmed_atk: 0
-unarmed_damage: -1
-staff_atk: 0
-staff_damage: -1
-attack: 0
-damage: -1
+ac: 14
+one_hand_atk: 5
+one_hand_damage: 4
+dual_wield_atk: 5
+dual_wield_damage: 4
+two_hand_atk: 5
+two_hand_damage: 6
+unarmed_atk: 6
+unarmed_damage: 5
+staff_atk: 5
+staff_damage: 4
+attack: 6
+damage: 5
 mag_resist: -2
-cbm: 0
-cbm_def: 9
+cbm: 6
+cbm_def: 20
 max_mana: -50
 mana: -50

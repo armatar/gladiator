@@ -19,7 +19,7 @@ class TestCharacter < PlayerCharacter
     @dual_wield_prof = 2
     @two_hand_prof = 3
     @magic_prof = 2
-    @unarmed_prof = 1
+    @unarmed_prof = 0
 
     calculate_initial_stats
 

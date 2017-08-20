@@ -223,8 +223,10 @@ module UI
       puts "Turn: " + Paint["#{turn}", :white]
       puts "#{player_character.name.capitalize}'s HP: " + Paint["#{player_character.hp}/#{player_character.max_hp}".ljust(25), :white] + 
            "#{player_character.name.capitalize}'s Mana: " + Paint["#{player_character.mana}/#{player_character.max_mana}", :white]
+      puts "#{player_character.name.capitalize}'s AC: " + Paint["#{player_character.ac}", :white]
       puts "#{@enemy.name.capitalize}'s HP: " + Paint["#{enemy.hp}/#{enemy.max_hp}".ljust(25), :white] + 
            "#{@enemy.name.capitalize}'s Mana: " + Paint["#{enemy.mana}/#{enemy.max_mana}", :white]
+      puts "#{enemy.name.capitalize}'s AC: " + Paint["#{enemy.ac}", :white]
       print_line
     end
 
@@ -395,6 +397,35 @@ module UI
           end
         end
       end
+      print_line
+    end
+
+    def display_options_when_grappled
+      print_line
+      print_title("You are Grappled")
+      print_line
+      print_stat_and_label("gain control", "Attempt to gain control of the grapple.")
+      print_stat_and_label("escape", "Attempt to escape from the grapple.")
+      print_stat_and_label("cast", "Cast a spell.")
+      print_line
+    end
+
+    def display_options_when_tripped
+      print_line
+      print_title("You are Prone")
+      print_line
+      print_stat_and_label("stand", "Attempt to stand up.")
+      print_stat_and_label("cast", "Cast a spell.")
+      print_line
+    end
+
+    def display_options_when_grappling
+      print_line
+      print_title("Enemy is Grappled")
+      print_line
+      print_stat_and_label("pin", "Attempt to pin the enemy to the ground.")
+      print_stat_and_label("cast", "Cast a spell.")
+      print_stat_and_label("release", "Release the enemy from your grapple.")
       print_line
     end
   end

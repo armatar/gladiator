@@ -17,7 +17,7 @@ module AutoAttack
 
   def attempt_to_hit(attacker, target, die_roll=roll_dice(1,20,1))
     attack = attacker.attack + die_roll
-    @message += "Attack: #{attacker.attack} + #{die_roll} = #{attack}, Target: #{target.ac}\n"
+    @message += "Attack: #{die_roll} + #{attacker.attack} = #{attack}, Target: #{target.ac}\n"
     if attack >= target.ac
       @message += "#{attacker.name} hits!\n"
       return true

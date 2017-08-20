@@ -55,9 +55,9 @@ module DayOne
 
     write_to_screen(string)
 
-    first_fight = Combat.new(@player_character, @first_enemy_wayland)
+    first_fight = Combat.new(@player_character, @first_enemy_wayland, "nothing")
 
-    result = first_fight.turn_based_combat
+    result = first_fight.fight!
     if result == "dead"
       @player_character.date = -1
       @player_character.hook = -1

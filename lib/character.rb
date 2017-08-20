@@ -143,6 +143,7 @@ class Character
       @mag_resist += points_to_update
       return @mag_resist
     when "spell failure"
+      points_to_update *= 10
       @spell_failure_chance += points_to_update
       return @spell_failure_chance
     when "dex modifier"

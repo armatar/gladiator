@@ -77,6 +77,8 @@ module CastSpellsPlayer
     if !check_if_spell_is_resisted(@player_character.get_magic_dc(spell[:level]), @enemy.mag_resist)
       damage = cast_damage_spell(spell, @player_character)
       @enemy.hp -= damage
+    else
+      @message += "You are already fully healed!\n"
     end
   end
 

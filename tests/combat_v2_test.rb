@@ -48,7 +48,7 @@ class CombatV2Test < Minitest::Test
     hps_to_test.each_pair do |answer, hps|
       @combat_session.player_character.hp = hps[0]
       @combat_session.enemy.hp = hps[1]
-      assert_equal(answer, @combat_session.start_combat(player_turn = false),
+      assert_equal(answer, @combat_session.start_combat(player_turn),
         "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return '#{answer}'.")
     end
 
@@ -56,30 +56,36 @@ class CombatV2Test < Minitest::Test
 
   def test_combat_loop
     @combat_session.enemy.hp = 0
-    player_turn = false
-    @combat_session.combat_loop(player_turn)
+    player_turn = true
+    with_stdin do |user|
+      user.puts "1"
+      capture_stdout{ @combat_session.combat_loop(player_turn) }
+    end
     assert_equal(1, @combat_session.turn, 
       "When the enemy's hp starts at 0, the loop should only run once.")
   end
 
   def test_turn_based_combat
-    player_turn = false
+    player_turn = true
 
     with_stdin do |user|
       user.puts "1"
       @combat_session.enemy.hp = 100
       @combat_session.player_character.hp = 100
-      @mock.expect :call, false, [false]
       @mock.expect :call, false, [true]
+      @mock.expect :call, false, [false]
       @combat_session.stub(:combat_phase, @mock) do
-        @combat_session.turn_based_combat(player_turn)
+        capture_stdout{ @combat_session.turn_based_combat(player_turn) }
       end
     end
     assert(@mock.verify)
 
-    @combat_session.enemy.hp = 0
-    assert(@combat_session.turn_based_combat(player_turn), 
-      "When the enemy has 0 HP, the function turn_based_combat should return true.")
+    with_stdin do |user|
+      user.puts "1"
+      @combat_session.enemy.hp = 0
+      capture_stdout{ assert(@combat_session.turn_based_combat(player_turn), 
+        "When the enemy has 0 HP, the function turn_based_combat should return true.") }
+    end
   end
 
   def test_combat_phase
@@ -87,8 +93,7 @@ class CombatV2Test < Minitest::Test
     @combat_session.stub(:initiate_correct_turn, @mock) do
       @combat_session.combat_phase(false)
     end
-
-    @mock.expect :call, false, [@combat_session.player_character.hp, @combat_session.enemy.hp]
+    @mock.expect :call, false
     @combat_session.stub(:check_for_death, @mock) do
       @combat_session.combat_phase(false)
     end
@@ -123,7 +128,9 @@ class CombatV2Test < Minitest::Test
   def test_who_is_dead
     hps_to_test = {"enemy" =>[10, 0], "player" =>[0, 10], "both" =>[0, 0]}
     hps_to_test.each_pair do |answer, hps|
-      assert_equal(answer, @combat_session.who_is_dead(hps[0], hps[1]),
+      @combat_session.player_character.hp = hps[0]
+      @combat_session.enemy.hp = hps[1]
+      assert_equal(answer, @combat_session.who_is_dead,
         "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return '#{answer}'.")
     end
   end
@@ -131,11 +138,14 @@ class CombatV2Test < Minitest::Test
   def test_check_for_death
     should_return_true = [[10, 0], [0, 10], [0, 0]]
     should_return_true.each do |hps|
-      assert(@combat_session.check_for_death(hps[0], hps[1]),
+      @combat_session.player_character.hp = hps[0]
+      @combat_session.enemy.hp = hps[1]
+      assert(@combat_session.check_for_death,
         "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return true.")
     end
-
-    assert(!@combat_session.check_for_death(10, 10),
+    @combat_session.player_character.hp = 10
+      @combat_session.enemy.hp = 10
+    assert(!@combat_session.check_for_death,
       "When the player's hp is above 0 and the enemy's hp is above 0, the function should return false.")
   end
 
