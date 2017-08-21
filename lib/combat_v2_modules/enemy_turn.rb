@@ -18,6 +18,7 @@ module EnemyTurn
       return false
     end
   end
+  
   def enemy_typical_combat_path
     enemy_consider_active_effects(@turn)
     action = rand(1..4)

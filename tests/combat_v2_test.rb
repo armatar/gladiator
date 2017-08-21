@@ -37,14 +37,14 @@ class CombatV2Test < Minitest::Test
     player_turn = true
     @mock.expect :call, "player", [player_turn] 
     @combat_session.stub(:start_combat, @mock) do
-      @combat_session.fight!
+      capture_stdout{@combat_session.fight!}
     end
     assert(@mock.verify)
   end
 
   def test_start_combat
     player_turn = false
-    hps_to_test = {"enemy" =>[10, 0], "player" =>[0, 10], "both" =>[0, 0]}
+    hps_to_test = {"enemy" =>[100, 0], "player" =>[0, 100], "both" =>[0, 0]}
     hps_to_test.each_pair do |answer, hps|
       @combat_session.player_character.hp = hps[0]
       @combat_session.enemy.hp = hps[1]
@@ -126,7 +126,7 @@ class CombatV2Test < Minitest::Test
   end
 
   def test_who_is_dead
-    hps_to_test = {"enemy" =>[10, 0], "player" =>[0, 10], "both" =>[0, 0]}
+    hps_to_test = {"enemy" =>[100, 0], "player" =>[0, 100], "both" =>[0, 0]}
     hps_to_test.each_pair do |answer, hps|
       @combat_session.player_character.hp = hps[0]
       @combat_session.enemy.hp = hps[1]
@@ -136,7 +136,7 @@ class CombatV2Test < Minitest::Test
   end
 
   def test_check_for_death
-    should_return_true = [[10, 0], [0, 10], [0, 0]]
+    should_return_true = [[100, 0], [0, 100], [0, 0]]
     should_return_true.each do |hps|
       @combat_session.player_character.hp = hps[0]
       @combat_session.enemy.hp = hps[1]
