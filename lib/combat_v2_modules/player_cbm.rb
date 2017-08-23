@@ -19,21 +19,36 @@ module PlayerCBM
     display_options_when_grappling
     display_combat_info(@player_character, @enemy, @turn)
     answer = ask_question("You have the enemy grappled! \nWhat would you like to do?", false, "Pinning the enemy to the ground is an automatic victory!")
-    return player_coordinate_actions_while_cbm(answer)
+    if ensure_valid_answer(["pin", "release", "cast"], answer)
+      return player_coordinate_actions_while_cbm(answer)
+    else
+      @message += "#{answer} is not a vaild action. Please try again."
+      return false
+    end
   end
 
   def player_is_tripped
     display_options_when_tripped
     display_combat_info(@player_character, @enemy, @turn)
     answer = ask_question("You have been tripped! \nWhat would you like to do?", false, "Standing will provoke an attack of opportunity!")
-    return player_coordinate_actions_while_cbm(answer)
+    if ensure_valid_answer(["stand", "cast"], answer)
+      return player_coordinate_actions_while_cbm(answer)
+    else
+      @message += "#{answer} is not a vaild action. Please try again."
+      return false
+    end
   end
 
   def player_is_grappled
     display_options_when_grappled
     display_combat_info(@player_character, @enemy, @turn)
-    answer = ask_question("You have been grappled! \nWhat would you like to do?", false, "Standing will provoke an attack of opportunity!")
-    return player_coordinate_actions_while_cbm(answer)
+    answer = ask_question("You have been grappled! \nWhat would you like to do?", false, "The enemy has a +5 advantage to maintaining control of the grapple!")
+    if ensure_valid_answer(["gain control", "escape", "cast"], answer)
+      return player_coordinate_actions_while_cbm(answer)
+    else
+      @message += "#{answer} is not a vaild action. Please try again."
+      return false
+    end
   end
 
   def player_coordinate_actions_while_cbm(answer)
@@ -47,7 +62,8 @@ module PlayerCBM
     elsif answer == "cast"
       return player_get_spell
     elsif answer == "stand"
-      return player_stand_up
+      player_stand_up
+      return true
     elsif answer == "gain control"
       player_gain_control
       return true

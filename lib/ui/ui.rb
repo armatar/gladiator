@@ -37,6 +37,10 @@ module UI
       puts Paint["press [enter] to continue..."]
       gets.chomp
     end
+  end
+
+  module Interact
+    include DisplayShortcuts
 
     def roll_dice(min, max, number_of_dice)
       dice_roll = 0
@@ -46,10 +50,14 @@ module UI
       return dice_roll
     end
 
-  end
-
-  module Interact
-    include DisplayShortcuts
+    def ensure_valid_answer(valid_answers, answer)
+      valid_answers.each do |answer_to_check|
+        if answer_to_check == answer
+          return true
+        end
+      end
+      return false
+    end
 
     def ask_question(question, options=false, tip=false)
       puts Paint[question]

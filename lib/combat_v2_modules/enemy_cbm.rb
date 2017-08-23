@@ -123,9 +123,7 @@ module EnemyCBM
   end
 
   def enemy_reverse_cbm(cbm)
-    puts "this is cbm: #{cbm}"
     effect = @status_effects[cbm[:status]]
-    puts "This is effect: #{effect}"
     reverse_status_effect(effect, @player_character.name)
     @message += "#{@player_character.name} has recovered from being #{cbm[:status]}\n\n"
     enemy_reverse_cbm_status

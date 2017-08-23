@@ -125,6 +125,16 @@ class CombatV2Test < Minitest::Test
     assert(@mock.verify)
   end
 
+  def test_kill_or_spare
+    with_stdin do |user|
+      user.puts "invalid"
+      user.puts "invalid"
+      user.puts "kill"
+      capture_stdout {assert_equal("kill", @combat_session.kill_or_spare,
+        "The function should return the answer to the question of whether or not the user wishes to kill or spare the life.")}
+    end
+  end
+
   def test_who_is_dead
     hps_to_test = {"enemy" =>[100, 0], "player" =>[0, 100], "both" =>[0, 0]}
     hps_to_test.each_pair do |answer, hps|

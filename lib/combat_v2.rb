@@ -109,12 +109,10 @@ class Combat
       print_line
       answer = ask_question("Kill him or spare his life?", ["kill", "spare"], 
                             "Think carefully about your decision as it may have lasting effects.")
-      if answer == "kill"
-        return answer
-      elsif answer == "spare"
+      if answer == "kill" || answer == "spare"
         return answer
       else
-        error_message("Please type either 'kill' or 'spare'.")
+        print_error_message("Please type either 'kill' or 'spare'.")
       end
     end
   end
