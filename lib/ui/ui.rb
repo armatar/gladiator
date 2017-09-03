@@ -229,12 +229,12 @@ module UI
 
     def display_combat_info(player_character, enemy, turn)
       puts "Turn: " + Paint["#{turn}", :white]
-      puts "#{player_character.name.capitalize}'s HP: " + Paint["#{player_character.hp}/#{player_character.max_hp}".ljust(25), :white] + 
-           "#{player_character.name.capitalize}'s Mana: " + Paint["#{player_character.mana}/#{player_character.max_mana}", :white]
-      puts "#{player_character.name.capitalize}'s AC: " + Paint["#{player_character.ac}", :white]
-      puts "#{@enemy.name.capitalize}'s HP: " + Paint["#{enemy.hp}/#{enemy.max_hp}".ljust(25), :white] + 
-           "#{@enemy.name.capitalize}'s Mana: " + Paint["#{enemy.mana}/#{enemy.max_mana}", :white]
-      puts "#{enemy.name.capitalize}'s AC: " + Paint["#{enemy.ac}", :white]
+      puts "#{player_character.name.capitalize}'s HP: " + Paint["#{player_character.hp}/#{player_character.max_hp}".ljust(22), :white] + 
+           "#{enemy.name.capitalize}'s HP: " + Paint["#{enemy.hp}/#{enemy.max_hp}", :white]
+      puts "#{player_character.name.capitalize}'s Mana: " + Paint["#{player_character.mana}/#{player_character.max_mana}".ljust(20), :white] + 
+           "#{enemy.name.capitalize}'s Mana: " + Paint["#{enemy.mana}/#{enemy.max_mana}", :white]
+      puts "#{player_character.name.capitalize}'s AC: " + Paint["#{player_character.ac}".ljust(22), :white] + 
+           "#{enemy.name.capitalize}'s AC: " + Paint["#{enemy.ac}", :white]
       print_line
     end
 
