@@ -1,13 +1,11 @@
-require_relative 'combat_v2_modules.rb'
 require_relative 'user_interface.rb'
 require_relative 'status_effects.rb'
 require_relative 'combat_maneuvers.rb'
 
 class Combat
-  include CombatV2Modules
   include UserInterface
 
-  attr_reader :player_character, :enemy, :turn
+  attr_reader :player_character, :enemy, :turn, :enemy_cbm_status, :player_cbm_status
 
   def initialize(player_character, enemy, special_events)
     @player_character = player_character
@@ -89,18 +87,33 @@ class Combat
     player_turn ? player_phase : enemy_phase
   end
 
+  def player_combat_display
+    system "clear"
+    display_activity_log(@message)
+    display_combat_options(@player_character)
+    display_combat_info(@player_character, @enemy, @turn)
+  end
+
   def player_phase
-    continue = false
-    while !continue
-      continue = player_turn
+    attack = false
+    while !attack
+      player_combat_display
+      @message = ""
+      @message += Paint["Player Turn ------\n", :red, :bold]
+      attack = @player_character.attack
     end
+    @message += attack[:message]
+    @message += @enemy.defend(attack)
   end
 
   def enemy_phase
-    continue = false
-    while !continue
-      continue = enemy_turn
+    @message += Paint["Enemy Turn ------\n", :red, :bold]
+    attack = false
+    while !attack
+      attack = @enemy.attack
     end
+    @message += attack[:message]
+    @message += @player_character.defend(attack)
   end
 
   def kill_or_spare

@@ -1,10 +1,12 @@
 require_relative "player_character_modules/level_up_calculations.rb"
 require_relative "../character.rb"
+require_relative "player_character_modules/player_combat.rb"
 
 class PlayerCharacter < Character
   #the class that manages the actual player character
 
   include LevelUpCalculations
+  include PlayerCombat
 
   attr_accessor :date, :hook, :sponsor
   attr_reader :current_exp, :exp_needed, :wealth, :fame, :available_proficiency_points

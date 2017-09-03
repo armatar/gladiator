@@ -181,7 +181,7 @@ module CharacterCalculations
     @init = @dex_modifier
   end
 
-  def get_magic_dc(spell_level)
+  def get_spell_dc(spell_level)
     mag_dc = 10 + @mag_modifier + (@cha_modifier/2) + @magic_prof + spell_level
     return mag_dc
   end

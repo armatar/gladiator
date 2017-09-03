@@ -83,5 +83,45 @@ class PlayerCBMTest < Minitest::Test
     end}
   end
 
+  def test_player_escape_grapple
+    @combat_session.enemy_set_cbm_status("grappled")
+    @combat_session.player_character.cbm = 100
+    @combat_session.player_escape_grapple
+    assert(!@combat_session.player_cbm_status,
+      "When the player escapes the grapple, their CBM status should be set to false.")
+  end
 
+  def test_player_gain_control
+    @combat_session.enemy_set_cbm_status("grappled")
+    @combat_session.player_character.cbm = 100
+    @combat_session.player_gain_control
+    assert(!@combat_session.player_cbm_status,
+      "When the player gains control, their CBM status should be set to false.")
+    assert_equal("grappled", @combat_session.enemy_cbm_status,
+      "When the player gains control, enemy CBM status should be set to 'grappled'.")
+
+    @combat_session.enemy_set_cbm_status("grappled")
+    @combat_session.player_reverse_cbm_status
+    @combat_session.player_character.cbm = -100
+    @combat_session.player_gain_control
+    assert_equal("grappled", @combat_session.player_cbm_status,
+      "When the player fails to gain control, their CBM status should be 'grappled' still.")
+    assert(!@combat_session.enemy_cbm_status,
+      "When the player fails to gain control, enemy CBM status should be unchanged.")
+  end
+
+  def test_player_stand_up
+    @combat_session.enemy_set_cbm_status("tripped")
+    @combat_session.player_stand_up
+    assert(!@combat_session.player_cbm_status,
+      "When the player stands, their status should clear out.")
+  end
+
+  def test_player_pin_enemy
+    @combat_session.player_character.cbm = 100
+    @combat_session.enemy.hp = 100
+    @combat_session.player_pin_enemy
+    assert_equal(-1, @combat_session.enemy.hp,
+      "When the player successfully pins an enemy, it should set their hp to -1")
+  end
 end

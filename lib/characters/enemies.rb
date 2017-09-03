@@ -1,7 +1,8 @@
 require_relative "../character.rb"
+require_relative "enemy_modules/enemy_ai.rb"
 
 class Enemies < Character
-
+  include EnemyAI
   attr_reader :gold_worth, :item_drop, :fame_worth, :exp_worth, :is_alive
   
   def initialize(name=get_random_name, race=get_random_race)

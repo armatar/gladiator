@@ -43,15 +43,17 @@ class CombatV2Test < Minitest::Test
   end
 
   def test_start_combat
-    player_turn = false
-    hps_to_test = {"enemy" =>[100, 0], "player" =>[0, 100], "both" =>[0, 0]}
-    hps_to_test.each_pair do |answer, hps|
-      @combat_session.player_character.hp = hps[0]
-      @combat_session.enemy.hp = hps[1]
-      assert_equal(answer, @combat_session.start_combat(player_turn),
-        "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return '#{answer}'.")
-    end
-
+    capture_stdout{ with_stdin do |user|
+      player_turn = true
+      hps_to_test = {"enemy" =>[100, 0], "player" =>[0, 100], "both" =>[0, 0]}
+      hps_to_test.each_pair do |answer, hps|
+        user.puts "1"
+        @combat_session.player_character.hp = hps[0]
+        @combat_session.enemy.hp = hps[1]
+        assert_equal(answer, @combat_session.start_combat(player_turn),
+          "When the player's hp is #{hps[0]} and the enemy's hp is #{hps[1]}, the function should return '#{answer}'.")
+      end
+    end}
   end
 
   def test_combat_loop
