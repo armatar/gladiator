@@ -20,6 +20,7 @@ class Character
   attr_reader :one_hand_prof, :two_hand_prof, :dual_wield_prof, :unarmed_prof, :magic_prof
   attr_reader :assign_attribute_points, :assign_proficiency_points, :max_proficency
   attr_reader :known_spells, :default_weapon, :full_spell_list, :spells_class
+  attr_reader :current_status_effects, :cbm_status
 
   def initialize(name, race)
     @items = Items.new
@@ -43,6 +44,7 @@ class Character
     @shield_bonus = 0
     @max_dex_bonus_for_ac = false
     @max_proficency = 10
+    @current_status_effects = []
   end
 
   def prof_base

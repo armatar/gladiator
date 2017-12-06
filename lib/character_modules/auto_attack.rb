@@ -71,6 +71,6 @@ module AutoAttack
       end
       count += 1
     end
-    return message
+    return {message: message}
   end
 end

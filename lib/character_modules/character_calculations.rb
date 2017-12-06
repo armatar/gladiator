@@ -148,7 +148,11 @@ module CharacterCalculations
   end
 
   def calculate_mana
-    @max_mana = (@magic_prof * 50 ) + (@mag_modifier * 40 ) + (@cha_modifier * 30) + (@level * 20)
+    mana = (@magic_prof * 50 ) + (@mag_modifier * 40 ) + (@cha_modifier * 30) + (@level * 20)
+    if mana < 0
+      mana = 0
+    end
+    @max_mana = mana
     @mana = @max_mana
     # Level 1, 16 + 3 mag, 14 + 2 cha, 1 prof = 250 mana
     # Level 2, 16 + 3 mag, 14 + 2 cha, 2 prof = 320 mana

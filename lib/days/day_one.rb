@@ -58,7 +58,8 @@ module DayOne
     first_fight = Combat.new(@player_character, @first_enemy_wayland, "nothing")
 
     result = first_fight.fight!
-    if result == "dead"
+
+    if result == "player" || result == "both"
       @player_character.date = -1
       @player_character.hook = -1
       return false

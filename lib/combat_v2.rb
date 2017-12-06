@@ -1,9 +1,9 @@
 require_relative 'user_interface.rb'
-require_relative 'status_effects.rb'
-require_relative 'combat_maneuvers.rb'
+require_relative 'combat_v2_modules.rb'
 
 class Combat
   include UserInterface
+  include CombatV2Modules
 
   attr_reader :player_character, :enemy, :turn, :enemy_cbm_status, :player_cbm_status
 
@@ -14,7 +14,6 @@ class Combat
     @message = ""
     @turn = 1
     create_counters
-    @status_effects = StatusEffects.status_effects
     create_cbm_status
   end
 
@@ -95,25 +94,35 @@ class Combat
   end
 
   def player_phase
-    attack = false
-    while !attack
+    continue = false
+    player_pre_combat_considerations
+    while !continue
       player_combat_display
       @message = ""
       @message += Paint["Player Turn ------\n", :red, :bold]
       attack = @player_character.attack
+      @message += attack[:message]
+      continue = attack[:continue]
     end
-    @message += attack[:message]
-    @message += @enemy.defend(attack)
+    set_buff_counters(attack[:player_buff_counters], attack[:enemy_buff_counters])
+    defend = @enemy.defend(attack)
+    set_curse_counters(defend[:player_curse_counters], defend[:enemy_curse_counters])
+    @message += defend[:message]
   end
 
   def enemy_phase
     @message += Paint["Enemy Turn ------\n", :red, :bold]
-    attack = false
-    while !attack
+    enemy_pre_combat_considerations
+    continue = false
+    while !continue
       attack = @enemy.attack
+      continue = attack[:continue]
     end
     @message += attack[:message]
-    @message += @player_character.defend(attack)
+    set_buff_counters(attack[:player_buff_counters], attack[:enemy_buff_counters])
+    defend = @player_character.defend(attack)
+    set_curse_counters(defend[:player_curse_counters], defend[:enemy_curse_counters])
+    @message += defend[:message]
   end
 
   def kill_or_spare

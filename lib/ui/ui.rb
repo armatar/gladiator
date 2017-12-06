@@ -292,19 +292,17 @@ module UI
       print_line
       puts Paint["Magic Resist: ".ljust(10), :white] + sprintf("%+d", @mag_resist.to_s).ljust(10) +
            Paint["Spell Failure: ".ljust(10), :white] + @spell_failure_chance.to_s + "%"
-      puts Paint["Magic DC: ".ljust(10), :white] + "Level 1: " + get_magic_dc(1).to_s.ljust(5) +
-                                    "Level 2: " + get_magic_dc(2).to_s.ljust(5) +
-                                    "Level 3: " + get_magic_dc(3).to_s.ljust(5) +
-                                    "Level 4: " + get_magic_dc(4).to_s.ljust(5) +
-                                    "Level 5: " + get_magic_dc(5).to_s
+      puts Paint["Magic DC: ".ljust(10), :white] + "Level 1: " + get_spell_dc(1).to_s.ljust(5) +
+                                    "Level 2: " + get_spell_dc(2).to_s.ljust(5) +
+                                    "Level 3: " + get_spell_dc(3).to_s.ljust(5) +
+                                    "Level 4: " + get_spell_dc(4).to_s.ljust(5) +
+                                    "Level 5: " + get_spell_dc(5).to_s
       print_line
       puts Paint["press [enter] to view spells and inventory..."]
       gets.chomp
       system "clear"
       print_line
-      puts Paint["Spells", :white]
-      print_line
-      print_line
+      display_spell_list(@known_spells)
       puts Paint["Inventory", :white]
       print_line
       display_list_of_items(@inventory)
@@ -389,12 +387,12 @@ module UI
   module CBMDisplay
     include DisplayShortcuts
 
-    def display_CBM(cbm_list, grappled)
+    def display_CBM(cbm_list, cbm_status)
       print_line
       print_title("Combat Maneuvers")
       print_line
       cbm_list.each_pair do |key, value|
-        if grappled
+        if cbm_status == "grappled"
           if key == "pin" || key == "release"
             print_stat_and_label(key, value[:description])
           end

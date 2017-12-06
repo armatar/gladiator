@@ -25,6 +25,7 @@ class PlayerCharacter < Character
     get_min_and_max_stats
     character_base
     player_base
+    add_spell_to_known_spells("ear-piercing scream", @full_spell_list["ear-piercing scream"])
   end
 
   #base character stats so that every number that should 

@@ -4,6 +4,9 @@ module CastSpell
   include UserInterface
 
   def spell_pre_checks(spell)
+    @spell_object = {
+        message: ""
+      }
     if spell[:type] == "healing"
       if !check_if_fully_healed(spell[:attribute])
         return account_for_cost(spell)
@@ -33,6 +36,8 @@ module CastSpell
   def cast_spell(spell)
     if check_if_overcome_spell_failure(@spell_failure_chance)
       @spell_object[:message] += "#{@name} casts #{spell[:name]}! \n"
+      @spell_object[:spell_dc] = get_spell_dc(spell[:level])
+      @spell_object[:spell] = {}
       coordinate_cast(spell, spell[:type])
     end
   end
@@ -43,24 +48,24 @@ module CastSpell
     elsif type == "healing"
       cast_healing_spell(spell)
     elsif type == "buff"
-      cast_buff_spell(spell, get_bonus(spell[:bonus], @player_character))
+      cast_buff_spell(spell, get_bonus(spell[:bonus]))
     elsif type == "curse"
-      cast_curse_spell(spell, get_bonus(spell[:bonus], @player_character))
+      cast_curse_spell(spell, get_bonus(spell[:bonus]))
     elsif type == "hybrid"
       cast_hybrid_spell(spell)
     end
   end
 
-  def player_cast_hybrid_spell(spell)
+  def cast_hybrid_spell(spell)
     spell[:hybrid_types].each do |type|
-      player_coordinate_cast(spell, type)
+      coordinate_cast(spell, type)
     end
+    @spell_object[:spell][:hybrid_types] = spell[:hybrid_types]
   end
 
   def cast_damage_spell(spell)
-    @spell_object[:spell_dc] = get_spell_dc(spell[:level])
     damage = get_spell_damage(spell)
-    @spell_object[:spell] = {name: spell[:name], type: spell[:type], damage: damage}
+    @spell_object[:spell] = update_object({name: spell[:name], type: spell[:type], damage: damage}, @spell_object[:spell])
   end
 
   def cast_healing_spell(spell)
@@ -68,68 +73,62 @@ module CastSpell
     @hp += healing
   end
 
-  def player_cast_buff_spell(spell, bonus)
+  def cast_buff_spell(spell, bonus)
     spell[:affected_stat].each do |stat|
-      updated_stat = @player_character.update_stat(stat, bonus)
-      @message += "#{@player_character.name}'s #{stat} has been updated to #{updated_stat}.\n"
+      updated_stat = update_stat(stat, bonus)
+      @spell_object[:message] += "#{@name}'s #{stat} has been updated to #{updated_stat}.\n"
     end
-    @message += "\n"
-    @player_buff_counter = set_list_of_effects(@player_buff_counter, spell, get_spell_time(@player_character, spell[:time], @turn),)
+    @spell_object[:message] += "\n"
+    @spell_object[:player_buff_counters] = {time: get_spell_time(spell[:time]), spell: spell}
   end
 
-  def player_reverse_buff_spells_loop(spells_to_reverse)
+  def cast_curse_spell(spell, bonus)
+    @spell_object[:spell] = update_object({name: spell[:name], type: spell[:type], bonus: bonus,
+      status_effect: spell[:status_effect], time: get_spell_time(spell[:time])}, @spell_object[:spell])
+  end
+
+  def reverse_buff_spells_loop(spells_to_reverse)
+    message = ""
     spells_to_reverse.each do |spell|
-      bonus = get_bonus(spell[:bonus], @player_character)
-      player_reverse_buff_spell(spell, bonus)
+      bonus = get_bonus(spell[:bonus])
+      message += reverse_buff_spell(spell, bonus)
     end
-    @message += "\n"
-    @player_buff_counter = restore_list_of_effects(@player_buff_counter, @turn)
+    message += "\n"
+    return message
   end
 
-  def player_reverse_buff_spell(spell, bonus)
+  def reverse_buff_spell(spell, bonus)
+    message = ""
     spell[:affected_stat].each do |stat|
-      updated_stat = @player_character.update_stat(stat, -bonus)
-      @message += "#{@player_character.name}'s #{stat} has been restored to #{updated_stat}.\n"
+      updated_stat = update_stat(stat, -bonus)
+      message += Paint["#{@name}'s #{stat} has been restored to #{updated_stat}.\n", :red, :bold]
     end
+    return message
   end
 
-  def player_cast_curse_spell(spell, bonus)
-    if !check_if_spell_is_resisted(@player_character.get_magic_dc(spell[:level]), @enemy.mag_resist)
-      if spell[:status_effect]
-        @message += "#{@enemy.name} has been #{spell[:status_effect]}\n\n"
-        effect = StatusEffects.status_effects[spell[:status_effect]]
-        implement_status_effect(effect, @enemy.name)
-      else
-        spell[:affected_stat].each do |stat|
-          updated_stat = @enemy.update_stat(stat, -bonus)
-          @message += "#{@enemy.name}'s #{stat} has been updated to #{updated_stat}.\n"
-        end
-      end
-      @message += "\n"
-      @enemy_curse_counter = set_list_of_effects(@enemy_curse_counter, spell, get_spell_time(@player_character, spell[:time], @turn),)
-    end
-  end
-
-  def player_reverse_curse_spells_loop(spells_to_reverse)
+  def reverse_curse_spells_loop(spells_to_reverse)
+    message = ""
     spells_to_reverse.each do |spell|
-      bonus = get_bonus(spell[:bonus], @player_character)
-      player_reverse_curse_spell(spell, bonus)
+      bonus = get_bonus(spell[:bonus])
+      message += reverse_curse_spell(spell, bonus)
     end
-    @message += "\n"
-    @enemy_curse_counter = restore_list_of_effects(@enemy_curse_counter, @turn)
+    message += "\n"
+    return message
   end
 
-  def player_reverse_curse_spell(spell, target)
+  def reverse_curse_spell(spell, bonus)
+    message = ""
     if spell[:status_effect]
       effect = StatusEffects.status_effects[spell[:status_effect]]
-      reverse_status_effect(effect, @enemy.name)
-      @message += "#{@enemy.name} has recovered from being #{spell[:status_effect]}\n\n"
+      reverse_status_effect(effect)
+      message += Paint["#{@name} has recovered from being #{spell[:status_effect]}\n\n", :red, :bold]
     else
       spell[:affected_stat].each do |stat|
-        updated_stat = @enemy.update_stat(stat, -bonus)
-        @message += "#{@enemy.name}'s #{stat} has been restored to #{updated_stat}.\n"
+        updated_stat = update_stat(stat, -bonus)
+        message += Paint["#{@name}'s #{stat} has been restored to #{updated_stat}.\n", :red, :bold]
       end
     end
+    return message
   end
 
   def check_if_overcome_spell_failure(spell_failure_chance, percent_roll=roll_dice(1, 100, 1))
@@ -171,17 +170,41 @@ module CastSpell
     end
   end
 
-  def get_spell_time(time, turn)
+  def get_spell_time(time)
     if time == "level"
-      return calculate_expiration_turn(@level, turn)
+      return @level
     elsif time == "charisma"
-      return calculate_expiration_turn(@cha_modifier, turn)
+      return @cha_modifier
     elsif time == "magic"
-      return calculate_expiration_turn(@mag_modifier, turn)
+      return @mag_modifier
     elsif time == "proficiency"
-      return calculate_expiration_turn(@magic_prof, turn)
+      return @magic_prof
     else
-      return calculate_expiration_turn(time, turn)
+      return time
     end
+  end
+
+  def implement_status_effect(effect)
+    message = ""
+    if @current_status_effects.include?(effect[:name])
+      message += "#{@name}'s #{effect[:name]} status has been extended!"
+    else
+      effect[:affected_stat].each do | stat |
+        updated_stat = update_stat(stat, effect[:penalty])
+        message += "#{@name}'s #{stat} has been updated to #{updated_stat}.\n"
+      end
+      @current_status_effects.push(effect[:name])
+    end
+    return message
+  end
+
+  def reverse_status_effect(effect)
+    message = ""
+    effect[:affected_stat].each do | stat |
+      updated_stat = update_stat(stat, -effect[:penalty])
+      message += Paint["#{@name}'s #{stat} has been restored to #{updated_stat}.\n", :red, :bold]
+    end
+    @current_status_effects.delete(effect[:name])
+    return message
   end
 end
